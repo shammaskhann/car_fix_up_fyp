@@ -55,7 +55,15 @@ android {
         }
     }
 }
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+    // Other dependencies
+}
 
+configurations.all {
+    resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+    resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10"
+}
 flutter {
     source = "../.."
 }

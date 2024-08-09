@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
-import 'package:car_fix_up/views/chat/chat_screen.dart';
-import 'package:car_fix_up/views/dashboard/controller/dashboard_controller.dart';
-import 'package:car_fix_up/views/home/home_view.dart';
+import 'package:car_fix_up/services/local-storage/localStorage.dart';
+import 'package:car_fix_up/views/User/chat/chat_screen.dart';
+import 'package:car_fix_up/views/User/dashboard/controller/dashboard_controller.dart';
+import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/workshop/workshop_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -177,6 +181,25 @@ class DashboardView extends GetView<DashboardController> {
                             Navigator.pop(context);
                           },
                         ),
+                        const Spacer(),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.logout,
+                            color: kWhiteColor,
+                          ),
+                          title: Text(
+                            'Logout',
+                            style: GoogleFonts.oxanium(
+                                color: kWhiteColor,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () async {
+                            LocalStorageService().clearAll();
+                            await FirebaseAuth.instance.signOut();
+                            Get.offAllNamed(RouteName.login);
+                          },
+                        ),
                       ],
                     )
                   ],
@@ -209,7 +232,11 @@ class DashboardView extends GetView<DashboardController> {
                       height: 50.h,
                       width: 1.sh,
                       decoration: BoxDecoration(
-                        color: kBlackColor,
+                        gradient: LinearGradient(
+                          colors: [kBlackColor, Colors.grey[800]!],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
@@ -218,28 +245,34 @@ class DashboardView extends GetView<DashboardController> {
                             blurRadius: 7,
                             offset: const Offset(0, 3),
                           ),
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: -2,
+                            blurRadius: 10,
+                            offset: const Offset(0, -3),
+                          ),
                         ],
                       ),
                       child: Obx(() => Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               _buildNavItem(
-                                  icon: Icons.home_outlined,
+                                  icon: kHomeIcon,
                                   index: 0,
                                   controller: dashboardController,
                                   pageController: _pageController),
                               _buildNavItem(
-                                  icon: Icons.schedule_rounded,
+                                  icon: kScheduledIcon,
                                   index: 1,
                                   controller: dashboardController,
                                   pageController: _pageController),
                               _buildNavItem(
-                                  icon: Icons.car_repair,
+                                  icon: kdignosticIcon,
                                   index: 2,
                                   controller: dashboardController,
                                   pageController: _pageController),
                               _buildNavItem(
-                                  icon: Icons.person_outline,
+                                  icon: kCarRepairIcon,
                                   index: 3,
                                   controller: dashboardController,
                                   pageController: _pageController),
@@ -247,13 +280,50 @@ class DashboardView extends GetView<DashboardController> {
                           )),
                     ),
                   )),
+              //SOS Button
+              Positioned(
+                bottom: 80,
+                right: 20,
+                child: InkWell(
+                  onTap: () => Get.toNamed(RouteName.videoCall),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: kBlackColor,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: kPrimaryColor.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: -2,
+                          blurRadius: 10,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
+                      gradient: LinearGradient(
+                        colors: [kBlackColor, Colors.grey[800]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: SvgPicture.asset(kSOSIcon, height: 30, width: 30),
+                  ),
+                ),
+              )
             ],
           ),
         ));
   }
 
   Widget _buildNavItem(
-      {required IconData icon,
+      {required String icon,
       required int index,
       required DashboardController controller,
       required PageController pageController}) {
@@ -264,14 +334,16 @@ class DashboardView extends GetView<DashboardController> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          SvgPicture.asset(
             icon,
+            height: 30,
+            width: 30,
             color: controller.currentIndex.value == index
                 ? kPrimaryColor
                 : kWhiteColor,
           ),
           AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 400),
             height: 5,
             width: controller.currentIndex.value == index ? 20 : 0,
             decoration: BoxDecoration(

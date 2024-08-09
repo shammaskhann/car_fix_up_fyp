@@ -2,9 +2,10 @@ import 'dart:developer';
 
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/shared/button.dart';
 import 'package:car_fix_up/shared/textfield.dart';
 import 'package:car_fix_up/shared/utils.dart';
-import 'package:car_fix_up/views/auth/controller/auth_controller.dart';
+import 'package:car_fix_up/views/User/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -101,52 +102,64 @@ class LoginView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                GestureDetector(
-                  onTap: () async {
-                    final String res = await controller.login();
-                    if (res == "Success") {
-                      Get.offAllNamed(RouteName.dashboard);
-                    } else {
-                      Utils.getErrorSnackBar(res);
-                    }
-                  },
-                  child: Container(
-                    height: 50.h,
-                    width: 1.sw,
-                    decoration: BoxDecoration(
-                      color: kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Center(
-                      child: Text("Login",
-                          style: GoogleFonts.oxanium(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                              color: kWhiteColor)),
-                    ),
+                Obx(
+                  () => CustomButton(
+                    text: "Login",
+                    onPressed: () async {
+                      controller.login();
+                    },
+                    textColor: kWhiteColor,
+                    isLoading: controller.isLoading.value,
+                    buttonColor: kPrimaryLightColor,
                   ),
                 ),
-                SizedBox(height: 15.h),
+                // GestureDetector(
+                //   onTap: () async {
+                //     final String res = await controller.login();
+                //     if (res == "Success") {
+                //       Get.offAllNamed(RouteName.dashboard);
+                //     } else {
+                //       Utils.getErrorSnackBar(res);
+                //     }
+                //   },
+                //   child: Container(
+                //     height: 50.h,
+                //     width: 1.sw,
+                //     decoration: BoxDecoration(
+                //       color: kPrimaryLightColor,
+                //       borderRadius: BorderRadius.circular(50),
+                //     ),
+                //     child: Center(
+                //       child: Text("Login",
+                //           style: GoogleFonts.oxanium(
+                //               fontSize: 20.sp,
+                //               fontWeight: FontWeight.bold,
+                //               color: kWhiteColor)),
+                //     ),
+                //   ),
+                //),
+                SizedBox(height: 20.h),
                 //Dont have an account? Sign Up (Make SignUP WORD COLOR kPrimaryColor)
-                GestureDetector(
-                  onTap: () {
-                    Get.toNamed('/signup');
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account? ",
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account? ",
+                        style: GoogleFonts.oxanium(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: kWhiteColor)),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(RouteName.signup);
+                      },
+                      child: Text("Sign Up",
                           style: GoogleFonts.oxanium(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              color: kWhiteColor)),
-                      Text("Sign Up",
-                          style: GoogleFonts.oxanium(
+                              decorationThickness: 2,
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
                               color: kPrimaryColor)),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

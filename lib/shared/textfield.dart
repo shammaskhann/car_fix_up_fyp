@@ -7,9 +7,9 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final TextInputType inputType;
-  bool isPasswordField = false;
-  String placeHolder;
-  void Function(String)? onChanged;
+  final bool isPasswordField;
+  final String placeHolder;
+  final void Function(String)? onChanged;
 
   CustomTextField({
     super.key,
@@ -27,15 +27,27 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool isObscure = true;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
-            focusNode: widget.isPasswordField
-                ? FocusNode()
-                : FocusNode(skipTraversal: true),
+            focusNode: _focusNode,
             style: GoogleFonts.oxanium(
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w500,
@@ -83,7 +95,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 10.0),
-            child: Text(widget.placeHolder ?? "",
+            child: Text(widget.placeHolder,
                 style: GoogleFonts.oxanium(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,

@@ -17,9 +17,8 @@ class HomeView extends StatelessWidget {
               clipper: BottomCurveClipper(),
               child: Container(
                 height: 0.25.sh, // Set the height to 20% of the screen height
-
                 decoration: const BoxDecoration(
-                  color: kPrimaryColor,
+                  color: kBlackColor,
                 ),
                 child: Column(
                   children: [
@@ -44,11 +43,11 @@ class HomeView extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 0.05.sh),
+                      padding: EdgeInsets.only(top: 0.02.sh),
                       child: Text(
                         "Welcome to Car Fix Up",
                         style: GoogleFonts.oxanium(
-                          color: Colors.white,
+                          color: kPrimaryColor,
                           fontSize: 0.06.sw,
                           fontWeight: FontWeight.bold,
                         ),

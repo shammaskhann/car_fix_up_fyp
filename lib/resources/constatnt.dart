@@ -27,8 +27,13 @@ const String kWorkshopIcon = 'assets/images/workshopIcon.svg';
 const String kPartsIcon = 'assets/images/partsIcon.svg';
 const String kChatIcon = 'assets/images/chatIcon.svg';
 const String kPlusIcon = 'assets/images/plusIcon.svg';
-const String kHomeIcon = 'assets/images/homeIcon.svg';
+const String kHomeIcon = 'assets/images/home.svg';
+const String kdignosticIcon = 'assets/images/diagnostic-car.svg';
+const String kCarRepairIcon = 'assets/images/car-repair.svg';
+const String kScheduledIcon = 'assets/images/schedule.svg';
 const String kProfileIcon = 'assets/images/profileIcon.svg';
+
+const String kSOSIcon = 'assets/images/sos.svg';
 
 const String workshop1Banner = 'assets/images/workshop1.svg';
 const String workshop2Banner = 'assets/images/workshop2.svg';
@@ -36,3 +41,9 @@ const String workshop3Banner = 'assets/images/workshop3.svg';
 const String workshop4Banner = 'assets/images/workshop4.svg';
 const String workshop5Banner = 'assets/images/workshop5.svg';
 const String workshop6Banner = 'assets/images/workshop6.svg';
+
+const int kAppID = 798845097;
+const String kAppSign =
+    "121f3b8632f7a56c8449f4b718fda4ccba2ce53d7362e893521bf09b63d4de1a";
+
+enum UserType { user, vendor }
