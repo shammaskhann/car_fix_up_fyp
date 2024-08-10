@@ -6,6 +6,7 @@ import 'package:car_fix_up/views/components/onBoarding_screen.dart';
 import 'package:car_fix_up/views/components/splash_screen.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/sos-video-call/sos_video_call_screen.dart';
+import 'package:car_fix_up/views/components/vendor_profile.dart';
 import 'package:get/get.dart';
 
 class AppRoutes {
@@ -49,13 +50,23 @@ class AppRoutes {
       ),
       GetPage(
         name: RouteName.videoCall,
-        page: (() => const SosVideoCalScreem()),
+        page: (() => SosVideoCalScreem(
+              callId: Get.arguments,
+            )),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
       GetPage(
         name: RouteName.chat,
         page: (() => const ChatView()),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.vendorProfile,
+        page: (() => VendorProfile(
+              vendor: Get.arguments,
+            )),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
@@ -73,4 +84,5 @@ class RouteName {
   static const String videoCall = '/video-call';
   static const String chat = '/chat';
   static const String profile = '/profile';
+  static const String vendorProfile = '/vendor-profile';
 }

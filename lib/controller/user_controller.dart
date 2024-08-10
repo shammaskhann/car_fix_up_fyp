@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
@@ -6,16 +9,16 @@ class UserController extends GetxController {
   late String _email;
   late String _password;
   late String _contactNo;
-  late String _userType;
+  late UserType _userType;
   late String _deviceToken;
 
-  // Getters
+  //Getter
   String get uid => _uid;
   String get name => _name;
   String get email => _email;
   String get password => _password;
   String get contactNo => _contactNo;
-  String get userType => _userType;
+  UserType get userType => _userType;
   String get deviceToken => _deviceToken;
 
   // Setters
@@ -39,7 +42,7 @@ class UserController extends GetxController {
     _contactNo = value;
   }
 
-  set userType(String value) {
+  set userType(UserType value) {
     _userType = value;
   }
 
@@ -53,9 +56,10 @@ class UserController extends GetxController {
     required String email,
     required String password,
     required String contactNo,
-    required String userType,
+    required UserType userType,
     required String deviceToken,
   }) {
+    log('Setting user info: $uid, $name, $email, $password, $contactNo, $userType, $deviceToken');
     this.uid = uid;
     this.name = name;
     this.email = email;

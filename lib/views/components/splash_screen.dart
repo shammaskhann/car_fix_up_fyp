@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +23,7 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> {
-  UserController userController = Get.put(UserController());
+  UserController userController = Get.put(UserController(), permanent: true);
   LocalStorageService local = LocalStorageService();
 
   @override
@@ -42,9 +46,25 @@ class _SplashViewState extends State<SplashView> {
           String? email = await local.getEmail();
           String? contactNo = await local.getContactNo();
           String? deviceToken = await local.getDeviceToken();
+          FirebaseMessaging.instance.onTokenRefresh
+              .listen((String token) async {
+            log("===Token Refreshed===");
+            log(token);
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .update({'deviceToken': token});
+            local.saveDeviceToken(token);
+            deviceToken = token;
+          });
+
           userController.setInfo(
               uid: uid!,
-              userType: userType!,
+              userType: (userType == "user")
+                  ? UserType.user
+                  : (userType == "vendor")
+                      ? UserType.vendor
+                      : UserType.user,
               name: name!,
               password: password!,
               email: email!,

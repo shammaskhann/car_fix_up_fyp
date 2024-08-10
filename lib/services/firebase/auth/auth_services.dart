@@ -1,13 +1,17 @@
 import 'dart:developer';
 
+import 'package:car_fix_up/controller/user_controller.dart';
+import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/shared/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
 
 class AuthServices {
   final auth = FirebaseAuth.instance;
   final _db = FirebaseFirestore.instance;
+  UserController userController = Get.find<UserController>();
 
   // ignore: non_constant_identifier_names
   Future<bool> Login(String email, String password) async {
@@ -33,16 +37,34 @@ class AuthServices {
       log('User Password: $password');
       log('User Phone: $phone');
       log('User Name: $name');
+      String userType = (userController.userType == UserType.user)
+          ? 'user'
+          : (userController.userType == UserType.vendor)
+              ? 'vendor'
+              : 'user';
 
-      await _db.collection('users').doc(userCredential.user!.uid).set({
-        'name': name,
-        'email': email,
-        'password': password,
-        'phone': phone,
-        'uid': userCredential.user!.uid,
-        'deviceToken': deviceToken,
-        'userType': 'user',
-      });
+      if (userType == 'user') {
+        await _db.collection('users').doc(userCredential.user!.uid).set({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'uid': userCredential.user!.uid,
+          'deviceToken': deviceToken,
+          'userType': userType,
+        });
+      }
+      if (userType == 'vendor') {
+        await _db.collection('vendors').doc(userCredential.user!.uid).set({
+          'name': name,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'uid': userCredential.user!.uid,
+          'deviceToken': deviceToken,
+          'userType': userType,
+        });
+      }
       return true;
     } on FirebaseAuthException catch (e) {
       AuthException.authExceptionToast(e.code);

@@ -275,6 +275,7 @@
 // }
 
 import 'package:car_fix_up/Routes/routes.dart';
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -293,6 +294,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late PageController _controller;
   late Timer _timer;
+  UserController userController = Get.find<UserController>();
 
   @override
   void initState() {
@@ -349,7 +351,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             Expanded(
-              flex: 3,
+              flex: 2,
               child: PageView.builder(
                 physics: const BouncingScrollPhysics(),
                 controller: _controller,
@@ -358,7 +360,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (context, i) {
                   return SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.all(40.0),
+                      padding: const EdgeInsets.only(
+                          right: 40.0, left: 40, top: 20, bottom: 20),
                       child: Column(
                         children: [
                           SvgPicture.asset(
@@ -366,7 +369,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             height: SizeConfig.blockV! * 35,
                           ),
                           SizedBox(
-                            height: (height >= 840) ? 60 : 30,
+                            height: (height >= 840) ? 30 : 10,
                           ),
                           Text(
                             contents[i].title,
@@ -419,49 +422,73 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.offAllNamed(RouteName.login);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 100, vertical: 20),
-                            textStyle: const TextStyle(fontSize: 17),
-                          ),
-                          child: Text(
-                            "Customer",
-                            style: GoogleFonts.oxanium(
-                                color: Colors.white,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        InkWell(
+                            onTap: () {
+                              userController.userType = UserType.user;
+                              Get.offAllNamed(RouteName.login);
+                            },
+                            child: Container(
+                              height: 50.h,
+                              width: 200.w,
+                              decoration: BoxDecoration(
+                                color: kPrimaryColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      "Customer",
+                                      style: GoogleFonts.oxanium(
+                                          color: Colors.white,
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )),
                         const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.offAllNamed(RouteName.login);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 100, vertical: 20),
-                            textStyle: const TextStyle(fontSize: 17),
-                          ),
-                          child: Text(
-                            "Vendor",
-                            style: GoogleFonts.oxanium(
-                                color: Colors.white,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        InkWell(
+                            onTap: () {
+                              userController.userType = UserType.vendor;
+                              Get.offAllNamed(RouteName.login);
+                            },
+                            child: Container(
+                              height: 50.h,
+                              width: 200.w,
+                              decoration: BoxDecoration(
+                                color: kPrimaryColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/car-repair (4) 1.png",
+                                      height: 21,
+                                      width: 20,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      "Vendor",
+                                      style: GoogleFonts.oxanium(
+                                          color: Colors.white,
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )),
                       ],
                     ),
                   ),

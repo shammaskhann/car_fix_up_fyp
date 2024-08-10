@@ -1,13 +1,19 @@
+import 'dart:developer';
+import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    HomeController homeController = Get.put(HomeController());
     return Scaffold(
         backgroundColor: Colors.white,
         //generate a list of items
@@ -17,8 +23,12 @@ class HomeView extends StatelessWidget {
               clipper: BottomCurveClipper(),
               child: Container(
                 height: 0.25.sh, // Set the height to 20% of the screen height
-                decoration: const BoxDecoration(
-                  color: kBlackColor,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [kBlackColor, Colors.grey[800]!],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -57,6 +67,27 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ZegoSendCallInvitationButton(
+                    onPressed:
+                        (String value1, String value2, List<String> value3) {
+                      Get.toNamed(RouteName.videoCall, arguments: "sos_call");
+                    },
+                    isVideoCall: true,
+                    //You need to use the resourceID that you created in the subsequent steps.
+                    //Please continue reading this document.
+                    resourceID: "car_fix_up",
+                    invitees: [
+                      ZegoUIKitUser(
+                        id: "101",
+                        name: "vendor@test.com",
+                      ),
+                    ],
+                  ),
+                ])
           ],
         ));
   }

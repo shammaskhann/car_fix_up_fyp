@@ -1,18 +1,23 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:car_fix_up/Routes/routes.dart';
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
 import 'package:car_fix_up/views/User/chat/chat_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/controller/dashboard_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
-import 'package:car_fix_up/views/workshop/workshop_view.dart';
+import 'package:car_fix_up/views/User/workshop/workshop_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});
@@ -21,7 +26,8 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     DashboardController dashboardController = Get.put(DashboardController());
     final PageController _pageController = PageController();
-
+    UserController userController = Get.find<UserController>();
+    final user = FirebaseAuth.instance.currentUser;
     return WillPopScope(
         onWillPop: () async {
           if (dashboardController.currentIndex.value == 0) {
@@ -88,16 +94,16 @@ class DashboardView extends GetView<DashboardController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(
+                DrawerHeader(
+                  decoration: const BoxDecoration(
                     color: kPrimaryColor,
                   ),
                   child: Center(
                     child: Text(
-                      'Car Fix Up',
-                      style: TextStyle(
+                      "Hello, ${userController.name ?? "User"} ",
+                      style: GoogleFonts.oxanium(
                           color: kWhiteColor,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -285,7 +291,9 @@ class DashboardView extends GetView<DashboardController> {
                 bottom: 80,
                 right: 20,
                 child: InkWell(
-                  onTap: () => Get.toNamed(RouteName.videoCall),
+                  onTap: () {
+                    Get.toNamed(RouteName.videoCall, arguments: "sos_call");
+                  }, //SOS Call
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     height: 50,

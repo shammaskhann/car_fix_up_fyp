@@ -75,3 +75,51 @@ String getDateFormattedAsDDMMYYYY(DateTime date) {
 String getDateFormattedAsDayMonDate(DateTime date) {
   return DateFormat('E MMM d, yyyy').format(date).toString();
 }
+
+String timeStampToDate(String timestamp) {
+  // Parse the input timestamp string to a DateTime object
+  DateTime dateTime = DateTime.parse(timestamp);
+
+  // Format the DateTime object to the desired date format
+  String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
+
+  return formattedDate;
+}
+
+// tring getDateFormattedAsDDMMYYYY(DateTime date) {
+//   return DateFormat('d/MM/yyyy').format(date).toString();
+// }
+
+// String getDateFormattedAsDayMonDate(DateTime date) {
+//   return DateFormat('E MMM d, yyyy').format(date).toString();
+// }
+
+String timeStampToRelativeTime(String timestamp) {
+  DateTime dateTime = DateTime.parse(timestamp);
+  DateTime now = DateTime.now();
+  Duration difference = now.difference(dateTime);
+
+  if (difference.inDays == 0) {
+    return "Today";
+  } else if (difference.inDays == 1) {
+    return "Yesterday";
+  } else if (difference.inDays < 7) {
+    return "${difference.inDays} days ago";
+  } else if (difference.inDays < 30) {
+    return "${(difference.inDays / 7).floor()} weeks ago";
+  } else if (difference.inDays < 365) {
+    return "${(difference.inDays / 30).floor()} months ago";
+  } else {
+    return "${(difference.inDays / 365).floor()} years ago";
+  }
+}
+
+String timeStampTo12HourFormat(String timestamp) {
+  // Parse the input timestamp string to a DateTime object
+  DateTime dateTime = DateTime.parse(timestamp);
+
+  // Format the DateTime object to a 12-hour format with AM/PM
+  String formattedTime = DateFormat('h:mm a').format(dateTime);
+
+  return formattedTime;
+}
