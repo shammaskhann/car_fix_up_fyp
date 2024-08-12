@@ -8,11 +8,13 @@ class CustomButton extends StatefulWidget {
   final Function() onPressed;
   final bool isLoading;
   final Color textColor;
+  final double borderRadius;
   final Color buttonColor;
   const CustomButton(
       {super.key,
       required this.text,
       required this.onPressed,
+      this.borderRadius = 50,
       this.isLoading = false,
       required this.textColor,
       required this.buttonColor});
@@ -31,7 +33,7 @@ class _CustomButtonState extends State<CustomButton> {
         width: 1.sw,
         decoration: BoxDecoration(
           color: widget.buttonColor,
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(widget.borderRadius),
         ),
         child: Center(
           child: widget.isLoading

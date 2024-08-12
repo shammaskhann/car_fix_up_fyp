@@ -1,7 +1,10 @@
 import 'dart:developer';
 import 'package:car_fix_up/Routes/routes.dart';
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
+import 'package:car_fix_up/views/User/home/screen/towing_service_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,6 +17,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
+    UserController userController = Get.find<UserController>();
     return Scaffold(
         backgroundColor: Colors.white,
         //generate a list of items
@@ -71,21 +75,130 @@ class HomeView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ZegoSendCallInvitationButton(
-                    onPressed:
-                        (String value1, String value2, List<String> value3) {
-                      Get.toNamed(RouteName.videoCall, arguments: "sos_call");
-                    },
-                    isVideoCall: true,
-                    //You need to use the resourceID that you created in the subsequent steps.
-                    //Please continue reading this document.
-                    resourceID: "car_fix_up",
-                    invitees: [
-                      ZegoUIKitUser(
-                        id: "101",
-                        name: "vendor@test.com",
-                      ),
-                    ],
+                  // ZegoSendCallInvitationButton(
+                  //   onPressed:
+                  //       (String value1, String value2, List<String> value3) {
+                  //     Get.toNamed(RouteName.videoCall, arguments: "sos_call");
+                  //   },
+                  //   isVideoCall: true,
+                  //   //You need to use the resourceID that you created in the subsequent steps.
+                  //   //Please continue reading this document.
+                  //   resourceID: "car_fix_up",
+                  //   invitees: [
+                  //     ZegoUIKitUser(
+                  //       id: "101",
+                  //       name: "vendor@test.com",
+                  //     ),
+                  //   ],
+                  // ),
+                  //Live Dignostic Video Call Banner
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 0.02.sh,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () => PushNotification.sendNotification(
+                              userController.deviceToken,
+                              "Live Dignostic Call Incoming",
+                              "A Customer is seeking a Live Dignostic on Video Call",
+                              {
+                                "notification_type": "CALL_NOTIFICATION",
+                                "callID": "sos_call",
+                                "userID": "102",
+                              }),
+                          child: Container(
+                            height: 0.3.sh,
+                            width: 0.4.sw,
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/roadside-assistance.png",
+                                  height: 0.2.sh,
+                                  width: 0.2.sw,
+                                ),
+                                Text(
+                                  "Live Dignostic \n Video Call",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.oxanium(
+                                    color: kPrimaryColor,
+                                    fontSize: 0.04.sw,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // SizedBox(
+                        //   width: 0.03.sw,
+                        // ),
+                        InkWell(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const TowingScreenServices(
+                                          // userLatLng: <String, double>{
+                                          //   "lat": 24.7732,
+                                          //   "lng": 67.0762,
+                                          // },
+                                          ))),
+                          child: Container(
+                            height: 0.3.sh,
+                            width: 0.4.sw,
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/towing.png",
+                                  height: 0.2.sh,
+                                  width: 0.2.sw,
+                                ),
+                                Text(
+                                  "Towing Service",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.oxanium(
+                                    color: kPrimaryColor,
+                                    fontSize: 0.04.sw,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ])
           ],

@@ -12,7 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+// final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,13 +21,13 @@ void main() async {
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+  // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   // call the useSystemCallingUI
-  ZegoUIKit().initLog().then((value) {
-    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-      [ZegoUIKitSignalingPlugin()],
-    );
-  });
+  // ZegoUIKit().initLog().then((value) {
+  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+  //     [ZegoUIKitSignalingPlugin()],
+  //   );
+  // });
 
   PushNotification().initializeLocalNotifications();
 
@@ -41,6 +41,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   log("Handling a background message: ${message.messageId}");
   log("Handling a background message: ${message.data}");
   log("Handling a background message: ${message.notification}");
+  PushNotification.handleNotificationTap(message.data);
 }
 
 class MyApp extends StatefulWidget {
@@ -63,10 +64,9 @@ class _MyAppState extends State<MyApp> {
       log("Handling a background message: ${message.data}");
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-
       if (notification != null && android != null) {
         PushNotification.showLocalNotification(
-            notification.title!, notification.body!, message.data.toString());
+            notification.title!, notification.body!, message.data);
       }
     });
 
@@ -89,3 +89,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+//"https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png"),

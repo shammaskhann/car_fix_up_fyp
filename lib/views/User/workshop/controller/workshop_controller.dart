@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:car_fix_up/model/vendor.model.dart';
-import 'package:car_fix_up/model/workshop.model.dart';
+import 'package:car_fix_up/model/Vendor/vendor.model.dart';
 import 'package:get/get.dart';
 
 import '../../../../services/firebase/vendors/vendor_services.dart';

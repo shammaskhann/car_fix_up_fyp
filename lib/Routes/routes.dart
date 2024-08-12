@@ -1,7 +1,11 @@
+import 'package:car_fix_up/model/Vendor/vendor.model.dart';
+import 'package:car_fix_up/testing/vendor_dashboard.dart';
 import 'package:car_fix_up/views/User/auth/login_view.dart';
 import 'package:car_fix_up/views/User/auth/signup_view.dart';
+import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:car_fix_up/views/User/chat/chat_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/dashboard..dart';
+import 'package:car_fix_up/views/User/home/screen/live-dignostic_screen.dart/live-dignostic.dart';
 import 'package:car_fix_up/views/components/onBoarding_screen.dart';
 import 'package:car_fix_up/views/components/splash_screen.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
@@ -58,7 +62,11 @@ class AppRoutes {
       ),
       GetPage(
         name: RouteName.chat,
-        page: (() => const ChatView()),
+        page: (() => ChatView(
+              uid: Get.arguments['uid'],
+              name: Get.arguments['name'],
+              imageUrl: Get.arguments['imageUrl'],
+            )),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
@@ -67,6 +75,20 @@ class AppRoutes {
         page: (() => VendorProfile(
               vendor: Get.arguments,
             )),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.liveDignostic,
+        page: (() => const LiveDignosticView()),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+
+      //testing screen
+      GetPage(
+        name: RouteName.vendorsDashboard,
+        page: (() => LocationSenderScreen()),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
@@ -85,4 +107,8 @@ class RouteName {
   static const String chat = '/chat';
   static const String profile = '/profile';
   static const String vendorProfile = '/vendor-profile';
+  static const String liveDignostic = '/live-dignostic';
+
+  //testing screen
+  static const String vendorsDashboard = '/vendors-dashboard';
 }

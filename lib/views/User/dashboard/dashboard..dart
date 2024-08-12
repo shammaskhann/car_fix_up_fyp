@@ -5,7 +5,7 @@ import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
-import 'package:car_fix_up/views/User/chat/chat_screen.dart';
+import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/controller/dashboard_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/workshop/workshop_view.dart';
@@ -100,7 +100,8 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                   child: Center(
                     child: Text(
-                      "Hello, ${userController.name ?? "User"} ",
+                      "Hello, user",
+                      // "Hello, ${userController.name ?? "User"} ",
                       style: GoogleFonts.oxanium(
                           color: kWhiteColor,
                           fontSize: 20.sp,
@@ -222,9 +223,9 @@ class DashboardView extends GetView<DashboardController> {
                 },
                 children: const [
                   HomeView(),
-                  ChatView(),
+                  ChatListView(),
                   WorkshopView(),
-                  ChatView()
+                  ChatListView()
                 ],
               ),
               // Custom floating bottom bar with animated page indicator

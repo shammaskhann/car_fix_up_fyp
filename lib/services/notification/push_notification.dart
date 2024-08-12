@@ -1,9 +1,13 @@
+// ignore_for_file: unused_import
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:googleapis/servicecontrol/v1.dart' as servicecontrol;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../Routes/routes.dart';
@@ -24,9 +28,18 @@ class PushNotification {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (payload) {
-        if (payload != null) {
-          Map<String, dynamic> data = json.decode(payload.payload!);
-          handleNotificationTap(data);
+        Map<String, dynamic> data = json.decode(payload.payload!);
+
+        log('Notification tapped with payload: $payload');
+        if (data.isNotEmpty) {
+          try {
+            log('Parsed notification data: $data');
+            handleNotificationTap(data);
+          } catch (e) {
+            log('Error parsing notification payload: $e');
+          }
+        } else {
+          log('Notification payload is null');
         }
       },
     );
@@ -55,18 +68,24 @@ class PushNotification {
   }
 
   static void handleNotificationTap(Map<String, dynamic> data) {
+    log('Notification tapped $data');
     String notificationType = data['notification_type'];
     if (notificationType == 'CALL_NOTIFICATION') {
-      String callId = data['call_id'];
+      String callId = data['callID'] ?? data['call_id']; // Handle both keys
+      log('Navigating to video call with callId: $callId');
       Get.toNamed(RouteName.videoCall, arguments: callId);
     } else if (notificationType == 'CLICK_NOTIFICATION') {
-      // Navigate to another screen based on your app's requirements
+      log('Navigating to dashboard');
       Get.toNamed(RouteName.dashboard);
+    } else {
+      log('Unknown notification type: $notificationType');
     }
   }
 
   static void showLocalNotification(
-      String title, String body, String payload) async {
+      String title, String body, Map<String, dynamic> payload) async {
+    log('Showing local notification $title $body $payload');
+
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -84,7 +103,7 @@ class PushNotification {
       title,
       body,
       platformChannelSpecifics,
-      payload: payload,
+      payload: json.encode(payload),
     );
   }
 
@@ -92,9 +111,9 @@ class PushNotification {
     final serviceAccountJson = {
       "type": "service_account",
       "project_id": "car-fix-up",
-      "private_key_id": "c7243eca2a02fd352200900d6c88790db7767f40",
+      "private_key_id": "f456c5ab3014bd4e3788527f7006e652aac03942",
       "private_key":
-          "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCyapnsfUkHPOcZ\nLAgND7oPC4+insWuwiGa16ju56prP/laL/GsgKj7T0t+3mNYMvHuVzz/oas0a7OI\ncfH6QZnJ3BCO9uqvnRKOXC6ldXMQq2zoLgkv9+YbNhPWsE53zGQJ8T7vAO30gIBw\n1w/HBf7GUQtVdDXIVzsF0TSaTjCZOkbM0RSVK22hqrzAaS/raYwMOLTwYjmuSoUI\nkT1uJoR1LNrE+gZ13D7PMpwk+mgzCRD1BfmuEg3a7ct7JuVst1LrkcjUdBSjr2AU\nVRVbkHQvyiCFfK4wR+JyCw8c/ZB816ao4qW1Az4xzcqSE9crzBHvHSfXm9lAZ3sZ\n9TfbvcDBAgMBAAECggEAO8eA/F58BgtPaT06E1pGHn1iqnulQ6kzBkUlCqsfjCDa\nxO+Ue5Z+R/npE0CjK62iJxgezY4XJZDCjkCTcaTiSOLNv4EW4DFyQrW7QWAJZjfx\n3Rdzp5lZhZuIaSIYoIYgrL4itoTqtcYKgwRj+mzVURBdikvOK2qi0Y+nnt385ZG0\nUv+8d3Pdwrl9qh1z+b+gGfpYXRmROXUevYW8227bXuPqH91/uy5WtGGvxZxRmhUE\nEtMO4baYLglgWLNA2DlXzTJoUBFEbshXRO117zuHJz902ydek0SgxuV0EGxj1O5o\na9rvxTgbOIjEO4pncfBjg1bH1szgW7AXyU5WpVgsewKBgQDdQN6mud4iAsMSZo6a\nuOZhNEymXtGd7p+VshyffUf93NCck+MsEN/fX/z7rCEf+sXsVIvqadQ82U4oijtE\nuhIRITNOd8adWbyjCWgtBvBRjIwgaL7QuXA0oZs5XHqFCI2hfFnEqPOYX8pg2mO9\nZWLv0ld1kEp3AaM6JvcK6acExwKBgQDOb4prZQAvPkQSI2VzQ2j0jhube9ocTJz7\nvxJxf0wAAJyhwbWw9WWmKcARaiz4GVBVKxTZ3j4n4IZczzKNAdOvpBGkupE2Qgpn\ngI+2Vlh3hlcAJV3APa9eot4Tq8QxyfymuIGtuCnH1/iM0rXasAvKizhXtDFZwFaQ\n/aWr9hh2NwKBgQCl4wpM9VTAKVP7Ctvm07Ufsme54aPGhvAt+6IMTpFYnGPo0dTk\n6C4CO+ThCXi4knwtKmLROdHAYamBKcswR1Zec4cVUSagOXT+xIHQKMCsU/WIIyDW\nPAMN4xEP2++cqQIPzr07fvVNDJ0fKv7XNRoN96ZNZgb+3UJ1yls1WmQ4ZwKBgA44\nyv15GNkoXgIt5BhbxYhLngVJNA6NDKefU0L0dSTu5duS/9RwI4+eArhwayawf8NO\nU4Jq+DdBFaChOadTP+Uy1XBW1hg51oOo7L2wFyos3COLb3kGBuXrLIeIZtzTQI+v\n2GdCb8Zvz5TME3E8faN3kesg4+F+Cbi1cMt3CdpjAoGBALo0FdTEJwJmjIJ/iz/8\nlzSm+5KUa4anwapV/6OS1MfWG+QcSTAH42kdJVSx5FWjadRCqiG82Dd+QkuCl6yi\neheoINB/CRdKHJbx/YUo8VGa2PqUwrFyG1vrbqCKpCgUuH443voC9aNNKemt7wKl\nJknemAThx6X5aorT6TST7bVJ\n-----END PRIVATE KEY-----\n",
+          "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDCd1VvEBp5Ju5A\nTpMYczLzkDFjtwv+K/mPbvRxKEKq78OiDfSHHnM/XoXg7dKctJRmgt3LwqoHdXAg\nG4Xgqh1Vhf0RXvH9M7GZOyG5ppf3gJCk4rYDH99QKLPnZo9MK/zL8cPLJq5+UFd0\no+EaGwWLtl609oxP2NyKqG1hLA3gpvtsa3Zr5zX1kogGatY7fyo6J3Qjb4GjIFuN\nMAAKbRQmrARSx+GAhw8+DdmW14s9SgX8+5hEWS4Fs6PHOFpZHH0Q5FFzMo/cCXyp\nsWdZDol52PsjrPyuYkGm+Pkk0xZhEnRM2QT68J7NkjI13x3eaazt/jWWKcmE38N1\noPsUGAb7AgMBAAECggEAGdSB+5OXAJqkMNR/A1Nh5Co19Tm+FQ/AQUYKn/EqEcxx\nHthdr4ji4/rpK3xLalcuEwO09DiyHvWBZDJjsPjHlrGKcME8wVYZc/H/w8oWC2D/\nVXdrl7SnE92kL8tWo1aAaJJ/YD+OE+cWBr8xyibmsK0TnVPWRVDX0m8WwD56xWkM\n2MKK7kek6I4XHA8gPXprNYZJWIoxDwtuaJ5qZpeMfW5Zay+YwZmKYOySBtHWcX91\nzLjksQpu8XJJLPdClB2DN5UtBDS7mSeDPBv0wGrTj/pYLtjDb7Ig1gI1w02oa7hu\n6bKRZA05Tq+Y16A+tiwozHEtD+TngbpLm6UGdvnxMQKBgQD+f9MVJffj/Z11SqXB\n0J6rWaViWxBFPkVN9Ibbwtu2QqvCt5XH9erll4E3myanXi7ob4W116j2yekUSZb4\nJzDHkbdsplpGjHl93dOAAR9DIMUvLJjYSFmTbB9n8D/ymJcuLhV9li2nmnJckqA3\nerPZWGooX1gO0TmLBhmswto9WQKBgQDDnOMWHE4ZDrgto0QG5rnGIpqC+w5ncN6K\nFJ9KEbFy6xBRUvBYJWgy3wPTjeJRYONRqKwZ8xS77X/YTGrYK5/p7dtir63bF2sq\nIENlaAEJvjcrmHk14g/XMRW+VQd8yote/u4FeoF2bEwMmGu84cmtkiruZF+zgezw\nEDoMAFs4cwKBgQDQ9MCp/4ed8RDESer4zEJKrAsnS197ito6XEgRzda5udnuwO9A\nw7/+jDtzHXdKOgFHpLFjEVPQdQ1jM9y5mOvrH9A7bAZ5IENsPaK22bUCV7iut+4y\nvoyVh1Pt8gt/MxwFtZ69g32uvBejvFvB0YQzMu3OgiH54H1fkT2pZD7t2QKBgGjd\nKQvIXsGmF2w30xcUB1FFaal/5wfjBRnm1kHB3GvrwdKm8LuASizDS2zU6heQJiy3\njJNYsavRNTECPmDmehLQ9UQhQ8Vo94UcyKSLLctIUpEnawtMxgspgCuJr7rhZfem\nGHmNY+vVQKub5l3aeOB4tFUaMAeuRhOnz0ZxxnUrAoGAfvFO0u5eP/yKW5rKwPZ2\nDyxOtSQCj+JXhCtKRZIs6HNrAUIM8/ejJzhVEYPqLeELwfANiufqJYbjq01OK3x+\nZTXzIsU+LhZIXa3DCjX33ud1nWsDP38Ioyvh7D10jzSkWiNm2JIniAc5PJAHyyxE\nv8adEXGHg1WmDxr7A+Prm6I=\n-----END PRIVATE KEY-----\n",
       "client_email": "carfixupadmin@car-fix-up.iam.gserviceaccount.com",
       "client_id": "115696344430186044321",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",

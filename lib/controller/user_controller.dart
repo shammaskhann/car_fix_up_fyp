@@ -50,7 +50,7 @@ class UserController extends GetxController {
     _deviceToken = value;
   }
 
-  void setInfo({
+  Future<void> setInfo({
     required String uid,
     required String name,
     required String email,
@@ -58,8 +58,8 @@ class UserController extends GetxController {
     required String contactNo,
     required UserType userType,
     required String deviceToken,
-  }) {
-    log('Setting user info: $uid, $name, $email, $password, $contactNo, $userType, $deviceToken');
+  }) async {
+    //log('Setting user info: $uid, $name, $email, $password, $contactNo, $userType, $deviceToken');
     this.uid = uid;
     this.name = name;
     this.email = email;

@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:car_fix_up/Routes/routes.dart';
+import 'package:car_fix_up/controller/user_controller.dart';
+import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/firebase/auth/auth_services.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
 import 'package:car_fix_up/shared/utils.dart';
@@ -19,6 +21,7 @@ class AuthController extends GetxController {
   final isLoading = false.obs;
   AuthServices authServices = AuthServices();
   LocalStorageService localStorageService = LocalStorageService();
+  UserController userController = Get.find<UserController>();
 
   Future<void> login() async {
     isLoading.value = true;
@@ -31,22 +34,18 @@ class AuthController extends GetxController {
     }
     final result = await authServices.Login(email, password);
     final auth = FirebaseAuth.instance;
-    final user = auth.currentUser;
-    String uid = user!.uid;
+    isLoading.value = false;
     //log(result.toString());
     if (result) {
+      log(userController.userType.toString());
+      if (userController.userType.toString() == "UserType.user") {
+        Get.offAllNamed(RouteName.home);
+      }
+      if (userController.userType.toString() == "UserType.vendor") {
+        Get.offAllNamed(RouteName.vendorsDashboard);
+      }
       Utils.getSuccessSnackBar("Login successfully");
-      FirebaseMessaging.instance.onTokenRefresh.listen((String token) async {
-        log("===Token Refreshed===");
-        log(token);
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(uid)
-            .update({'deviceToken': token});
-        localStorageService.saveDeviceToken(token);
-      });
-
-      Get.offAllNamed(RouteName.dashboard);
+    } else {
       isLoading.value = false;
     }
     isLoading.value = false;

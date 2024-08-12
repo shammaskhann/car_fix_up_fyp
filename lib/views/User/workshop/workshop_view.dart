@@ -1,6 +1,5 @@
 import 'package:car_fix_up/Routes/routes.dart';
-import 'package:car_fix_up/model/vendor.model.dart';
-import 'package:car_fix_up/model/workshop.model.dart';
+import 'package:car_fix_up/model/Vendor/vendor.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/workshop/controller/workshop_controller.dart';

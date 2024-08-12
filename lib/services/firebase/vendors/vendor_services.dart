@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:car_fix_up/model/vendor.model.dart';
+import 'package:car_fix_up/model/Vendor/vendor.model.dart';
 
 class VendorServices {
   final auth = FirebaseAuth.instance;
@@ -17,6 +17,16 @@ class VendorServices {
     } catch (e) {
       print(e);
       return [];
+    }
+  }
+
+  Future<Vendor> getVendorByUid(String uid) async {
+    try {
+      final vendorSnapshot = await _db.collection('vendors').doc(uid).get();
+      return Vendor.fromJson(vendorSnapshot.data()!);
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to get vendor');
     }
   }
 }
