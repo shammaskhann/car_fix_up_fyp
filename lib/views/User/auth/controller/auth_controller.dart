@@ -39,7 +39,7 @@ class AuthController extends GetxController {
     if (result) {
       log(userController.userType.toString());
       if (userController.userType.toString() == "UserType.user") {
-        Get.offAllNamed(RouteName.home);
+        Get.offAllNamed(RouteName.dashboard);
       }
       if (userController.userType.toString() == "UserType.vendor") {
         Get.offAllNamed(RouteName.vendorsDashboard);

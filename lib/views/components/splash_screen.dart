@@ -39,6 +39,7 @@ class _SplashViewState extends State<SplashView> {
     if (user != null) {
       Future.delayed(const Duration(seconds: 3), () async {
         if (isUser) {
+          log("===User Logged In===");
           String? uid = await local.getUid();
           String? userType = await local.getUserType();
           String? name = await local.getName();
@@ -58,11 +59,11 @@ class _SplashViewState extends State<SplashView> {
             deviceToken = token;
           });
 
-          userController.setInfo(
+          await userController.setInfo(
               uid: uid!,
-              userType: (userType == "user")
+              userType: (userType == "user" || userType == "UserType.user")
                   ? UserType.user
-                  : (userType == "vendor")
+                  : (userType == "vendor" || userType == "UserType.vendor")
                       ? UserType.vendor
                       : UserType.user,
               name: name!,
@@ -70,8 +71,14 @@ class _SplashViewState extends State<SplashView> {
               email: email!,
               contactNo: contactNo!,
               deviceToken: deviceToken!);
+
+          if (userController.userType == UserType.vendor) {
+            Get.offAllNamed(RouteName.vendorsDashboard);
+          }
+          if (userController.userType == UserType.user) {
+            Get.offAllNamed(RouteName.dashboard);
+          }
         }
-        Get.offAllNamed(RouteName.dashboard);
       });
     } else {
       Future.delayed(const Duration(seconds: 3), () {

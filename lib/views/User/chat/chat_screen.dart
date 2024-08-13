@@ -1,20 +1,22 @@
 import 'dart:developer';
 
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/model/Chat/Message.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/shared/common_method.dart';
 import 'package:car_fix_up/views/User/chat/controller/chat_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class ChatView extends StatefulWidget {
   final String uid;
-  final String name;
-  final String imageUrl;
-  const ChatView(
-      {required this.uid, required this.name, required this.imageUrl, Key? key})
-      : super(key: key);
+
+  const ChatView({required this.uid, super.key});
 
   @override
   _ChatViewState createState() => _ChatViewState();
@@ -23,12 +25,34 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   late ChatViewController _chatViewController;
   late TextEditingController _messageController;
+  UserController userController = Get.find<UserController>();
+  RxString name = ''.obs;
+  RxString imageUrl = ''.obs;
+  RxString deviceToken = ''.obs;
 
   @override
   void initState() {
     super.initState();
     _chatViewController = ChatViewController();
     _messageController = TextEditingController();
+    _chatViewController.getChatUserInfo(widget.uid).then((value) {
+      log("User Info: ${value.toString()}");
+
+      name.value = value['name'];
+
+      // // Safely extract the imageUrl
+      // if (value.containsKey('workshop') &&
+      //     value['workshop'].containsKey('imageUrl')) {
+      //   imageUrl.value = value['workshop']['imageUrl'];
+      // } else {
+      //   imageUrl.value = "assets/images/workshop1.png";
+      //   log("Image URL key not found in workshop info, using default");
+      // }
+      // log("Image URL: ${imageUrl.value}");
+
+      // // Safely extract the deviceToken
+      deviceToken.value = value['deviceToken'];
+    });
   }
 
   @override
@@ -41,6 +65,7 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     log("Widget Build");
     final auth = FirebaseAuth.instance.currentUser;
+    UserController userController = Get.find<UserController>();
     return Scaffold(
       backgroundColor: kWhiteColor,
       body: Container(
@@ -62,41 +87,35 @@ class _ChatViewState extends State<ChatView> {
                 ),
                 Row(children: [
                   CircleAvatar(
-                    radius: 0.03.sh,
-                    backgroundImage: AssetImage(widget.imageUrl),
-                  ),
+                      radius: 0.03.sh,
+                      backgroundColor: kGreyText,
+                      child: Obx(() => Text(
+                            getInitials(name.value == "" ? "User" : name.value),
+                            style: GoogleFonts.oxanium(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                                color: kWhiteColor),
+                          ))),
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    widget.name,
-                    style: GoogleFonts.oxanium(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        color: kBlackColor),
-                  ),
+                  Obx(
+                    () => Text(
+                      name.value == "" ? "User" : name.value,
+                      style: GoogleFonts.oxanium(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: kBlackColor),
+                    ),
+                  )
                 ]),
                 const Spacer(),
               ],
-            ),
-            const SizedBox(
-              height: 20,
             ),
             Expanded(
               child: StreamBuilder<List<Message>?>(
                 stream: _chatViewController.getMessages(widget.uid),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'No Messages Yet',
-                        style: GoogleFonts.oxanium(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                            color: kBlackColor),
-                      ),
-                    );
-                  }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
@@ -110,39 +129,56 @@ class _ChatViewState extends State<ChatView> {
                           style: TextStyle(color: kBlackColor)),
                     );
                   }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No Messages Yet',
+                        style: GoogleFonts.oxanium(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: kBlackColor),
+                      ),
+                    );
+                  }
                   if (snapshot.hasData) {
+                    final reversedMessages = snapshot.data!.reversed.toList();
                     return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      reverse: true,
+                      itemCount: reversedMessages.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.only(
-                              left: 0.05.sw, right: 0.05.sw, top: 0.02.sh),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                radius: 0.03.sh,
-                                backgroundImage: AssetImage(widget.imageUrl),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: kBlackColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  snapshot.data![index].message,
-                                  style: GoogleFonts.oxanium(
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: kWhiteColor),
-                                ),
-                              ),
-                            ],
-                          ),
+                        final String messageID =
+                            reversedMessages[index].messageId;
+                        final String message = reversedMessages[index].message;
+                        final String sender = reversedMessages[index].senderUid;
+                        final String reciever =
+                            reversedMessages[index].recieverUid;
+                        final bool isMyMessage = sender == auth!.uid;
+                        final Timestamp timeStamp =
+                            reversedMessages[index].timestamp;
+                        final bool isMedia = reversedMessages[index].isMedia;
+                        final bool isRead = reversedMessages[index].isRead;
+                        log("Message: $message ${isMyMessage.toString()}");
+                        // final String messageID =
+                        //     snapshot.data![index].messageId;
+                        // final String message = snapshot.data![index].message;
+                        // final String sender = snapshot.data![index].senderUid;
+                        // final String reciever =
+                        //     snapshot.data![index].recieverUid;
+                        // final bool isMyMessage = sender == auth!.uid;
+                        // final Timestamp timeStamp =
+                        //     snapshot.data![index].timestamp;
+                        // final bool isMedia = snapshot.data![index].isMedia;
+                        // final bool isRead = snapshot.data![index].isRead;
+                        if (!isMyMessage) {
+                          //mark seend logic here
+                          _chatViewController.markMessageAsRead(sender);
+                        }
+                        return ChatMessageWidget(
+                          messageID: messageID,
+                          message: message,
+                          isMyMessage: isMyMessage,
+                          isRead: isRead,
+                          timeStamp: timeStamp,
                         );
                       },
                     );
@@ -156,8 +192,8 @@ class _ChatViewState extends State<ChatView> {
                 },
               ),
             ),
-            SizedBox(
-              height: 0.1.sh,
+            const SizedBox(
+              height: 15,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -205,9 +241,25 @@ class _ChatViewState extends State<ChatView> {
                             if (_messageController.text.isEmpty) {
                               return;
                             } else {
-                              log("Msg Send to Reciever: ${widget.uid}, Sender:${auth!.uid} Msg:${_messageController.text}");
-                              _chatViewController.sendMessage(
-                                  widget.uid, _messageController);
+                              String senderName = userController.name;
+                              //log("Msg Send to Reciever: ${widget.uid}, Sender:${auth!.uid} Msg:${_messageController.text}");
+                              if (deviceToken.value == "") {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('User is not available to chat'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              } else {
+                                _chatViewController.sendMessage(
+                                    widget.uid, _messageController);
+                                _chatViewController.sendNotification(
+                                    deviceToken.value,
+                                    "Message from $senderName",
+                                    _messageController.text,
+                                    widget.uid);
+                              }
                               _messageController.clear();
                             }
                           },
@@ -252,5 +304,97 @@ class _ChatViewState extends State<ChatView> {
             ),
           ])),
     );
+  }
+}
+
+class ChatMessageWidget extends StatelessWidget {
+  final String messageID;
+  final String message;
+  final bool isMyMessage;
+  final bool isRead;
+  final Timestamp timeStamp;
+  const ChatMessageWidget(
+      {required this.messageID,
+      required this.message,
+      required this.isMyMessage,
+      required this.isRead,
+      required this.timeStamp,
+      super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String formattedTime = DateFormat('hh:mm a').format(timeStamp.toDate());
+
+    return Padding(
+        padding: EdgeInsets.only(left: 0.01.sw, right: 0.01.sw, top: 0.01.sh),
+        child: Column(
+          crossAxisAlignment:
+              isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 5),
+              decoration: BoxDecoration(
+                color: isMyMessage ? const Color(0xFF596787) : kBlackColor,
+                borderRadius: isMyMessage
+                    ? const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                      )
+                    : const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    child: Text(
+                      message,
+                      style: GoogleFonts.oxanium(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: isMyMessage ? kWhiteColor : kWhiteColor),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: isMyMessage
+                        ? isRead
+                            ? Icon(
+                                Icons.done_all,
+                                color: kPrimaryColor,
+                                size: 10.sp,
+                              )
+                            : Icon(
+                                Icons.done,
+                                color: kWhiteColor,
+                                size: 10.sp,
+                              )
+                        : const SizedBox(),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              formattedTime,
+              style: GoogleFonts.oxanium(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
+                  color: kBlackColor),
+            ),
+          ],
+        ));
   }
 }

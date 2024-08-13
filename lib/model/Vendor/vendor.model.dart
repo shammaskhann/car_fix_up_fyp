@@ -99,7 +99,10 @@ class Vendor {
               area: '',
               city: '',
               imageUrl: '',
-              loc: null),
+              loc: null,
+              operationalTime: '',
+              closeTime: '',
+            ),
       workshopReviews: json['reviews'] != null
           ? List<WorkshopReview>.from(
               json['reviews'].map((x) => WorkshopReview.fromJson(x)))

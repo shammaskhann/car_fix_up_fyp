@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 String? validateMobileNumberLength(String? value) {
@@ -76,13 +77,11 @@ String getDateFormattedAsDayMonDate(DateTime date) {
   return DateFormat('E MMM d, yyyy').format(date).toString();
 }
 
-String timeStampToDate(String timestamp) {
-  // Parse the input timestamp string to a DateTime object
-  DateTime dateTime = DateTime.parse(timestamp);
-
-  // Format the DateTime object to the desired date format
+String timeStampToDate(Timestamp timestamp) {
+  // Parse the input timestamp string to a Dat
+  DateTime dateTime = timestamp.toDate();
+  // Format the DateTime object to a 12-hour format with AM/PM
   String formattedDate = DateFormat('d MMM yyyy').format(dateTime);
-
   return formattedDate;
 }
 

@@ -1,69 +1,152 @@
+import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/testing/Vendor/Vendor_Home.dart';
+import 'package:car_fix_up/testing/Vendor/towing_location_Sender_Screen.dart';
+import 'package:car_fix_up/testing/Vendor/vendor_chatList_screen.dart';
+import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:location/location.dart';
-import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class LocationSenderScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class VendorDashBoardScreen extends StatefulWidget {
+  const VendorDashBoardScreen({super.key});
+
   @override
-  _LocationSenderScreenState createState() => _LocationSenderScreenState();
+  State<VendorDashBoardScreen> createState() => _VendorDashBoardScreenState();
 }
 
-class _LocationSenderScreenState extends State<LocationSenderScreen> {
-  late Location location;
-  late LocationData currentLocation;
-  late Stream<LocationData> locationStream;
-
-  @override
-  void initState() {
-    super.initState();
-    location = new Location();
-    startLocationStream();
-  }
-
-  void startLocationStream() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    locationStream = location.onLocationChanged;
-    locationStream.listen((LocationData currentLocation) {
-      log('Location: ${currentLocation.latitude}, ${currentLocation.longitude}');
-      FirebaseFirestore.instance
-          .collection('towing_rides')
-          .doc(
-              'cKD8bJ50Q8W4JMNz_i-U1r:APA91bHYg9qGa3X-8U3EXI0kUk-kyD0nurWHYtUwYtCZoIt_pKZz3Z8qfqsXB8aizackMQ7IsrUZRDi4Y1z5-n7es2FNO85UrlacBgQ03lazhRldqXgGyPfQYBKZRlJUn5qLrhmIK0JO')
-          .set({
-        'pickup': GeoPoint(30.3308401, 71.247499),
-        'pickup_name': 'Your Pickup Name',
-        'active_location':
-            GeoPoint(currentLocation.latitude!, currentLocation.longitude!)
-      });
-    });
-  }
+class _VendorDashBoardScreenState extends State<VendorDashBoardScreen> {
+  final PageController _pageController = PageController();
+  final RxInt _currentIndex = 0.obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Send Location'),
+      body: Stack(
+        children: [
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              _currentIndex.value = index;
+            },
+            children: const [
+              VendorHomeview(),
+              ChatListView(),
+              LocationSenderScreen(),
+            ],
+          ),
+          BottomNavBar(
+            pageController: _pageController,
+            currentIndex: _currentIndex,
+          ),
+        ],
       ),
-      body: Center(
-        child: Text('Sending location to Firestore...'),
+    );
+  }
+}
+
+class BottomNavBar extends StatelessWidget {
+  final PageController pageController;
+  final RxInt currentIndex;
+
+  BottomNavBar({required this.pageController, required this.currentIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 10,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Container(
+          height: 50.h,
+          width: 1.sh,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [kBlackColor, Colors.grey[800]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: kBlackColor.withOpacity(0.1),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: -2,
+                blurRadius: 10,
+                offset: const Offset(0, -3),
+              ),
+            ],
+          ),
+          child: Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                      icon: kHomeIcon,
+                      index: 0,
+                      currentIndex: currentIndex,
+                      pageController: pageController),
+                  _buildNavItem(
+                      icon: kScheduledIcon,
+                      index: 1,
+                      currentIndex: currentIndex,
+                      pageController: pageController),
+                  _buildNavItem(
+                      icon: kdignosticIcon,
+                      index: 2,
+                      currentIndex: currentIndex,
+                      pageController: pageController),
+                  _buildNavItem(
+                      icon: kCarRepairIcon,
+                      index: 3,
+                      currentIndex: currentIndex,
+                      pageController: pageController),
+                ],
+              )),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+      {required String icon,
+      required int index,
+      required RxInt currentIndex,
+      required PageController pageController}) {
+    return InkWell(
+      onTap: () {
+        pageController.jumpToPage(index);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            icon,
+            height: 30,
+            width: 30,
+            color: currentIndex.value == index ? kPrimaryColor : kWhiteColor,
+          ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            height: 5,
+            width: currentIndex.value == index ? 20 : 0,
+            decoration: BoxDecoration(
+              color: kPrimaryColor,
+              borderRadius: BorderRadius.circular(2.5),
+            ),
+          ),
+        ],
       ),
     );
   }

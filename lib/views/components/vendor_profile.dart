@@ -191,6 +191,28 @@ class VendorProfile extends StatelessWidget {
                                                         0),
                                                 zoom: 15,
                                               ),
+                                              markers: {
+                                                Marker(
+                                                  markerId: MarkerId(
+                                                      vendor.workshop.name),
+                                                  position: LatLng(
+                                                      vendor.workshop.loc
+                                                              ?.lat ??
+                                                          0,
+                                                      vendor.workshop.loc
+                                                              ?.lng ??
+                                                          0),
+                                                  infoWindow: InfoWindow(
+                                                    title: vendor.workshop.name,
+                                                    snippet:
+                                                        "${vendor.workshop.area},${vendor.workshop.city}",
+                                                  ),
+                                                ),
+                                              },
+                                              zoomControlsEnabled: false,
+                                              scrollGesturesEnabled: false,
+                                              rotateGesturesEnabled: false,
+                                              tiltGesturesEnabled: false,
                                             ),
                                           ),
                                         ),
@@ -424,11 +446,7 @@ class VendorProfile extends StatelessWidget {
                 child: CustomButton(
                   text: "Schedule Visit",
                   onPressed: () {
-                    Get.toNamed(RouteName.chat, arguments: {
-                      "uid": vendor.uid,
-                      "name": vendor.workshop.name,
-                      "imageUrl": vendor.workshop.imageUrl,
-                    });
+                    Get.toNamed(RouteName.scheduleAppoint, arguments: vendor);
                   },
                   borderRadius: 5,
                   textColor: kWhiteColor,

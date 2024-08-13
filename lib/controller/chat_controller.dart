@@ -22,7 +22,8 @@ class ChatController {
       chatDocumentId,
       message,
       recieverUid,
-      user!.uid,
+      user.uid,
+      isRead: false,
     );
 
     String chatDocumentId2 = '${recieverUid}_${user.uid}';
@@ -30,7 +31,8 @@ class ChatController {
       chatDocumentId2,
       message,
       recieverUid,
-      user!.uid,
+      user.uid,
+      isRead: true,
     );
   }
 
@@ -53,23 +55,27 @@ class ChatController {
     });
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> lastMessege(String recieverUID) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> lastMessege(String senderUid) {
     final user = auth.currentUser;
-    String chatDocumentId = '${user!.uid}_${recieverUID}';
+    String chatDocumentId = '${user!.uid}_${senderUid}';
     //log('chatDocumentId: $chatDocumentId');
     return _chatServices.lastMessage(chatDocumentId);
   }
 
-  markChatAsReadn(String chatdocumentid) {
+  markChatAsReadn(String senderUid) {
     final user = auth.currentUser;
-    String chatDocumentId = '${chatdocumentid}_${user!.uid}';
+    String chatDocumentId = '${senderUid}_${user!.uid}';
     //log('Marking As Seen Msg of chatDocumentId: $chatDocumentId');
     return _chatServices.markChatAsRead(chatDocumentId);
   }
 
-  noOfNewMessage(String chatdocumentid) {
+  noOfNewMessage(String senderUid) {
     final user = auth.currentUser;
-    String chatDocumentId = '${chatdocumentid}_${user!.uid}';
+    String chatDocumentId = '${senderUid}_${user!.uid}';
+
+    // String chatDocumentId = '${user!.uid}_${senderUid}';
+    log('Check No Of New Messages chatDocumentId: $chatDocumentId',
+        name: 'ChatController');
     //log('Check No Of New Messages chatDocumentId: $chatDocumentId');
     return _chatServices.noOfNewMessages(chatDocumentId);
   }

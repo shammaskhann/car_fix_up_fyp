@@ -24,7 +24,7 @@ class ChatServices {
 
   void sendMessage(
       String chatId, String message, String recieverUid, String senderUid,
-      {bool isMedia = false}) {
+      {bool isMedia = false, bool isRead = false}) {
     log('chatId: $chatId');
     chatCollection.doc(chatId).collection('messages').add({
       'messageId': chatCollection.doc(chatId).collection('messages').doc().id,
@@ -33,7 +33,7 @@ class ChatServices {
       'message': message,
       'timestamp': FieldValue.serverTimestamp(),
       'isMedia': isMedia,
-      'isRead': false,
+      'isRead': isRead,
     });
   }
 

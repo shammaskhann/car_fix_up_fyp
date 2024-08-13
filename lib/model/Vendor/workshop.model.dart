@@ -44,6 +44,8 @@ class Workshop {
   final String city;
   final String imageUrl;
   final Location? loc;
+  final String operationalTime;
+  final String closeTime;
 
   Workshop({
     required this.name,
@@ -53,18 +55,21 @@ class Workshop {
     required this.city,
     required this.imageUrl,
     required this.loc,
+    required this.operationalTime,
+    required this.closeTime,
   });
 
   factory Workshop.fromJson(Map<String, dynamic> json) {
     return Workshop(
-      name: json['name'] ?? '',
-      id: json['id'] ?? '',
-      desc: json['desc'] ?? '',
-      area: json['area'] ?? '',
-      city: json['city'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      loc: json['loc'] != null ? Location.fromJson(json['loc']) : null,
-    );
+        name: json['name'] ?? '',
+        id: json['id'] ?? '',
+        desc: json['desc'] ?? '',
+        area: json['area'] ?? '',
+        city: json['city'] ?? '',
+        imageUrl: json['imageUrl'] ?? '',
+        loc: json['loc'] != null ? Location.fromJson(json['loc']) : null,
+        operationalTime: json['operationalTime'] ?? '',
+        closeTime: json['closeTime'] ?? '');
   }
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +80,8 @@ class Workshop {
         'city': city,
         'imageUrl': imageUrl,
         'loc': loc?.toJson(),
+        'operationalTime': operationalTime,
+        'closeTime': closeTime,
       };
 }
 

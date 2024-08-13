@@ -75,8 +75,15 @@ class PushNotification {
       log('Navigating to video call with callId: $callId');
       Get.toNamed(RouteName.videoCall, arguments: callId);
     } else if (notificationType == 'CLICK_NOTIFICATION') {
-      log('Navigating to dashboard');
-      Get.toNamed(RouteName.dashboard);
+      if (data['type'] == 'chat') {
+        String uid = data['uid'];
+        log('Navigating to chat with uid: $uid');
+        Get.toNamed(RouteName.chat, arguments: {'uid': uid});
+      } else {
+        log('Unknown notification type: ${data['type']}');
+        log('Navigating to dashboard');
+        Get.toNamed(RouteName.dashboard);
+      }
     } else {
       log('Unknown notification type: $notificationType');
     }

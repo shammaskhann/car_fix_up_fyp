@@ -1,4 +1,6 @@
 import 'package:car_fix_up/model/Vendor/vendor.model.dart';
+import 'package:car_fix_up/testing/Vendor/towing_location_Sender_Screen.dart';
+import 'package:car_fix_up/testing/Vendor/vendor_chatList_screen.dart';
 import 'package:car_fix_up/testing/vendor_dashboard.dart';
 import 'package:car_fix_up/views/User/auth/login_view.dart';
 import 'package:car_fix_up/views/User/auth/signup_view.dart';
@@ -11,7 +13,9 @@ import 'package:car_fix_up/views/components/splash_screen.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/sos-video-call/sos_video_call_screen.dart';
 import 'package:car_fix_up/views/components/vendor_profile.dart';
+import 'package:car_fix_up/views/schedule_appointment/schedule_app_screen.dart';
 import 'package:get/get.dart';
+import 'package:googleapis/gkebackup/v1.dart';
 
 class AppRoutes {
   static List<GetPage> appRoute() {
@@ -62,11 +66,9 @@ class AppRoutes {
       ),
       GetPage(
         name: RouteName.chat,
-        page: (() => ChatView(
-              uid: Get.arguments['uid'],
-              name: Get.arguments['name'],
-              imageUrl: Get.arguments['imageUrl'],
-            )),
+        page: () => ChatView(
+          uid: Get.arguments["uid"],
+        ),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
@@ -87,11 +89,31 @@ class AppRoutes {
 
       //testing screen
       GetPage(
-        name: RouteName.vendorsDashboard,
+        name: RouteName.liveLocScreen,
         page: (() => LocationSenderScreen()),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
+      GetPage(
+        name: RouteName.vendorsDashboard,
+        page: (() => VendorDashBoardScreen()),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.vendorChatScreen,
+        page: () => VendorChatListScreen(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.scheduleAppoint,
+        page: () => ScheduleAppointView(
+          vendor: Get.arguments,
+        ),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      )
     ];
   }
 }
@@ -109,6 +131,10 @@ class RouteName {
   static const String vendorProfile = '/vendor-profile';
   static const String liveDignostic = '/live-dignostic';
 
+  static const String scheduleAppoint = '/schedule-appoint';
+
   //testing screen
   static const String vendorsDashboard = '/vendors-dashboard';
+  static const String liveLocScreen = '/live-loc-screen';
+  static const String vendorChatScreen = '/vendor-chat-screen';
 }
