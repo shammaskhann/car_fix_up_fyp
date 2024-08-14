@@ -29,6 +29,7 @@ class _ChatViewState extends State<ChatView> {
   RxString name = ''.obs;
   RxString imageUrl = ''.obs;
   RxString deviceToken = ''.obs;
+  RxBool isLoading = false.obs; // Use RxBool for loading state
 
   @override
   void initState() {
@@ -36,21 +37,9 @@ class _ChatViewState extends State<ChatView> {
     _chatViewController = ChatViewController();
     _messageController = TextEditingController();
     _chatViewController.getChatUserInfo(widget.uid).then((value) {
-      log("User Info: ${value.toString()}");
+      //log("User Info: ${value.toString()}");
 
       name.value = value['name'];
-
-      // // Safely extract the imageUrl
-      // if (value.containsKey('workshop') &&
-      //     value['workshop'].containsKey('imageUrl')) {
-      //   imageUrl.value = value['workshop']['imageUrl'];
-      // } else {
-      //   imageUrl.value = "assets/images/workshop1.png";
-      //   log("Image URL key not found in workshop info, using default");
-      // }
-      // log("Image URL: ${imageUrl.value}");
-
-      // // Safely extract the deviceToken
       deviceToken.value = value['deviceToken'];
     });
   }
@@ -63,7 +52,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    log("Widget Build");
+    //("Widget Build");
     final auth = FirebaseAuth.instance.currentUser;
     UserController userController = Get.find<UserController>();
     return Scaffold(
@@ -123,7 +112,44 @@ class _ChatViewState extends State<ChatView> {
                       ),
                     );
                   }
+
+                  if (snapshot.hasData) {
+                    final reversedMessages = snapshot.data!.reversed.toList();
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: reversedMessages.length,
+                      itemBuilder: (context, index) {
+                        //log('TimeStamp of recent message ${reversedMessages[index].message}: ${reversedMessages[index].timestamp}');
+                        final String messageID =
+                            reversedMessages[index].messageId;
+                        final String message = reversedMessages[index].message;
+                        final String sender = reversedMessages[index].senderUid;
+                        // ignore: unused_local_variable
+                        final String reciever =
+                            reversedMessages[index].recieverUid;
+                        final bool isMyMessage = sender == auth!.uid;
+                        final Timestamp? timeStamp =
+                            reversedMessages[index].timestamp ??
+                                Timestamp.now();
+                        // ignore: unused_local_variable
+                        final bool isMedia = reversedMessages[index].isMedia;
+                        final bool isRead = reversedMessages[index].isRead;
+                        //log("Message: $message ${isMyMessage.toString()}");
+                        if (!isMyMessage) {
+                          _chatViewController.markMessageAsRead(sender);
+                        }
+                        return ChatMessageWidget(
+                          messageID: messageID,
+                          message: message,
+                          isMyMessage: isMyMessage,
+                          isRead: isRead,
+                          timeStamp: timeStamp ?? Timestamp.now(),
+                        );
+                      },
+                    );
+                  }
                   if (snapshot.hasError) {
+                    //log("Error: ${snapshot.error}");
                     return const Center(
                       child: Text('Something went wrong',
                           style: TextStyle(color: kBlackColor)),
@@ -138,49 +164,6 @@ class _ChatViewState extends State<ChatView> {
                             fontWeight: FontWeight.bold,
                             color: kBlackColor),
                       ),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    final reversedMessages = snapshot.data!.reversed.toList();
-                    return ListView.builder(
-                      reverse: true,
-                      itemCount: reversedMessages.length,
-                      itemBuilder: (context, index) {
-                        final String messageID =
-                            reversedMessages[index].messageId;
-                        final String message = reversedMessages[index].message;
-                        final String sender = reversedMessages[index].senderUid;
-                        final String reciever =
-                            reversedMessages[index].recieverUid;
-                        final bool isMyMessage = sender == auth!.uid;
-                        final Timestamp timeStamp =
-                            reversedMessages[index].timestamp;
-                        final bool isMedia = reversedMessages[index].isMedia;
-                        final bool isRead = reversedMessages[index].isRead;
-                        log("Message: $message ${isMyMessage.toString()}");
-                        // final String messageID =
-                        //     snapshot.data![index].messageId;
-                        // final String message = snapshot.data![index].message;
-                        // final String sender = snapshot.data![index].senderUid;
-                        // final String reciever =
-                        //     snapshot.data![index].recieverUid;
-                        // final bool isMyMessage = sender == auth!.uid;
-                        // final Timestamp timeStamp =
-                        //     snapshot.data![index].timestamp;
-                        // final bool isMedia = snapshot.data![index].isMedia;
-                        // final bool isRead = snapshot.data![index].isRead;
-                        if (!isMyMessage) {
-                          //mark seend logic here
-                          _chatViewController.markMessageAsRead(sender);
-                        }
-                        return ChatMessageWidget(
-                          messageID: messageID,
-                          message: message,
-                          isMyMessage: isMyMessage,
-                          isRead: isRead,
-                          timeStamp: timeStamp,
-                        );
-                      },
                     );
                   } else {
                     return const Center(
@@ -201,7 +184,6 @@ class _ChatViewState extends State<ChatView> {
                 Expanded(
                   child: Container(
                     height: 0.06.sh,
-                    // width: 0.75.sw,
                     decoration: BoxDecoration(
                       color: const Color(0xFF596787),
                       borderRadius: BorderRadius.circular(10),
@@ -218,7 +200,6 @@ class _ChatViewState extends State<ChatView> {
                               fontWeight: FontWeight.bold,
                               color: kWhiteColor),
                           controller: _messageController,
-                          //onChanged: (value) => log(value),
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Type a message',
@@ -236,38 +217,43 @@ class _ChatViewState extends State<ChatView> {
                           color: kPrimaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            if (_messageController.text.isEmpty) {
-                              return;
-                            } else {
-                              String senderName = userController.name;
-                              //log("Msg Send to Reciever: ${widget.uid}, Sender:${auth!.uid} Msg:${_messageController.text}");
-                              if (deviceToken.value == "") {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('User is not available to chat'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                              } else {
-                                _chatViewController.sendMessage(
-                                    widget.uid, _messageController);
-                                _chatViewController.sendNotification(
-                                    deviceToken.value,
-                                    "Message from $senderName",
-                                    _messageController.text,
-                                    widget.uid);
-                              }
-                              _messageController.clear();
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.send,
-                            color: kWhiteColor,
-                          ),
-                        ),
+                        child: Obx(() => IconButton(
+                              onPressed: isLoading.value
+                                  ? null
+                                  : () async {
+                                      if (_messageController.text.isEmpty) {
+                                        return;
+                                      } else {
+                                        isLoading.value = true;
+                                        String senderName = userController.name;
+                                        if (deviceToken.value == "") {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'User is not available to chat'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        } else {
+                                          await _chatViewController.sendMessage(
+                                              widget.uid, _messageController);
+                                          await _chatViewController
+                                              .sendNotification(
+                                                  deviceToken.value,
+                                                  "Message from $senderName",
+                                                  _messageController.text,
+                                                  widget.uid);
+                                        }
+                                        _messageController.clear();
+                                        isLoading.value = false;
+                                      }
+                                    },
+                              icon: const Icon(
+                                Icons.send,
+                                color: kWhiteColor,
+                              ),
+                            )),
                       ),
                     ]),
                   ),
@@ -283,14 +269,7 @@ class _ChatViewState extends State<ChatView> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
-                    onPressed: () {
-                      // if (_chatViewController.messageController.text.isEmpty) {
-                      //   return;
-                      // } else {
-                      //   log("Msg Send to Reciever: ${widget.uid}, Sender:${auth!.uid} Msg:${_chatController.messageController.text}");
-                      //   _chatController.sendMessage(widget.uid);
-                      // }
-                    },
+                    onPressed: () {},
                     icon: const Icon(
                       Icons.add,
                       color: kWhiteColor,
@@ -307,23 +286,26 @@ class _ChatViewState extends State<ChatView> {
   }
 }
 
+// ignore: must_be_immutable
 class ChatMessageWidget extends StatelessWidget {
   final String messageID;
   final String message;
   final bool isMyMessage;
   final bool isRead;
-  final Timestamp timeStamp;
-  const ChatMessageWidget(
+  Timestamp? timeStamp;
+  ChatMessageWidget(
       {required this.messageID,
       required this.message,
       required this.isMyMessage,
       required this.isRead,
-      required this.timeStamp,
+      this.timeStamp,
       super.key});
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime = DateFormat('hh:mm a').format(timeStamp.toDate());
+    timeStamp ??= Timestamp.now();
+    String formattedTime = DateFormat('hh:mm a')
+        .format(timeStamp?.toDate() ?? Timestamp.now().toDate());
 
     return Padding(
         padding: EdgeInsets.only(left: 0.01.sw, right: 0.01.sw, top: 0.01.sh),

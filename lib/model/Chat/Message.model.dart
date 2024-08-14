@@ -5,7 +5,7 @@ class Message {
   final String recieverUid;
   final String senderUid;
   final String message;
-  final Timestamp timestamp;
+  final Timestamp? timestamp;
   final bool isMedia;
   final bool isRead;
 
@@ -26,7 +26,7 @@ class Message {
       recieverUid: doc['recieverUid'],
       senderUid: doc['senderUid'],
       message: doc['message'],
-      timestamp: doc['timestamp'],
+      timestamp: doc['timestamp'] as Timestamp?,
       isMedia: doc['isMedia'],
       isRead: doc['isRead'],
     );

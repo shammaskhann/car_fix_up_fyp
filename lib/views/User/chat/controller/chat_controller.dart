@@ -33,8 +33,7 @@ class ChatViewController extends GetxController {
     return chatController.getMessages(senderUid);
   }
 
-  void sendMessage(
-      String recieverUid, TextEditingController messageController) {
+  sendMessage(String recieverUid, TextEditingController messageController) {
     chatController.sendMessage(recieverUid, messageController.text);
   }
 
@@ -43,7 +42,7 @@ class ChatViewController extends GetxController {
     chatController.markChatAsReadn(senderUid);
   }
 
-  void sendNotification(String recieverDeviceToken, String title, String body,
+  sendNotification(String recieverDeviceToken, String title, String body,
       String recieverUid) {
     PushNotification.sendNotification(recieverDeviceToken, title, body, {
       'click_action': 'CLICK_NOTIFICATION',

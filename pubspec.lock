@@ -1213,6 +1213,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  time_slot:
+    dependency: "direct main"
+    description:
+      name: time_slot
+      sha256: eee91c29541a604e2ad47f548f92ee89e91e28c0fbda362e1bfc3dac6e5f351c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   timezone:
     dependency: transitive
     description:

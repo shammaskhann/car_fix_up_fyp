@@ -29,4 +29,18 @@ class VendorServices {
       throw Exception('Failed to get vendor');
     }
   }
+
+  Future<List<String>> getAllVendorsUids() {
+    try {
+      final vendorsSnapshot = _db.collection('vendors').get();
+      return vendorsSnapshot.then((value) {
+        return value.docs.map((doc) => doc.id).toList();
+      }).then((value) {
+        return value;
+      });
+    } catch (e) {
+      print(e);
+      return [] as Future<List<String>>;
+    }
+  }
 }
