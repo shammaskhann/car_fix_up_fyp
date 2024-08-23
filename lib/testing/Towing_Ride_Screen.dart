@@ -245,8 +245,9 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
         GeoPoint activeLocation = documentSnapshot['active_location'];
         LatLng towTruckLocation =
             LatLng(activeLocation.latitude, activeLocation.longitude);
+        //drawRoute(towTruckLocation);
         updateTowTruckMarker(towTruckLocation);
-        drawRoute(towTruckLocation);
+
         checkProximity(towTruckLocation, widget.userLocation);
       }
     });
@@ -264,12 +265,14 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
 
   void updateTowTruckMarker(LatLng latLng) async {
     final Uint8List markerIcon =
-        await getBytesFromAsset('assets/images/car.png', 100);
+        await getBytesFromAsset('assets/images/tow_truck.png', 200);
     setState(() {
       _markers.add(
         Marker(
           markerId: MarkerId('towTruck'),
           position: latLng,
+
+          // ignore: deprecated_member_use
           icon: BitmapDescriptor.fromBytes(markerIcon),
         ),
       );
@@ -284,31 +287,31 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
     );
   }
 
-  void drawRoute(LatLng towTruckLocation) async {
-    String googleAPIKey = 'YOUR_GOOGLE_API_KEY';
-    String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${towTruckLocation.latitude},${towTruckLocation.longitude}&destination=${widget.userLocation.latitude},${widget.userLocation.longitude}&key=$googleAPIKey';
+  // void drawRoute(LatLng towTruckLocation) async {
+  //   String googleAPIKey = 'AIzaSyBz4XY4fieOWwYCOsMklNXJh2li7GL2DCY';
+  //   String url =
+  //       'https://maps.googleapis.com/maps/api/directions/json?origin=${towTruckLocation.latitude},${towTruckLocation.longitude}&destination=${widget.userLocation.latitude},${widget.userLocation.longitude}&key=${googleAPIKey}';
 
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
-      if ((data['routes'] as List).isNotEmpty) {
-        Map<String, dynamic> route = data['routes'][0];
-        PolylineResult result =
-            PolylineResult.fromJson(route['overview_polyline']);
-        setState(() {
-          _polylines.add(
-            Polyline(
-              polylineId: PolylineId('route'),
-              points: result.points,
-              color: Colors.blue,
-              width: 5,
-            ),
-          );
-        });
-      }
-    }
-  }
+  //   final response = await http.get(Uri.parse(url));
+  //   if (response.statusCode == 200) {
+  //     Map<String, dynamic> data = jsonDecode(response.body);
+  //     if ((data['routes'] as List).isNotEmpty) {
+  //       Map<String, dynamic> route = data['routes'][0];
+  //       PolylineResult result =
+  //           PolylineResult.fromJson(route['overview_polyline']);
+  //       setState(() {
+  //         _polylines.add(
+  //           Polyline(
+  //             polylineId: PolylineId('route'),
+  //             points: result.points,
+  //             color: Colors.blue,
+  //             width: 5,
+  //           ),
+  //         );
+  //       });
+  //     }
+  //   }
+  // }
 
   void checkProximity(LatLng towTruckLocation, LatLng userLocation) {
     dev.log('Tow Truck Location: $towTruckLocation');

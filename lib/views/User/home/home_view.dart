@@ -134,7 +134,7 @@ class HomeView extends StatelessWidget {
                                   width: 0.2.sw,
                                 ),
                                 Text(
-                                  "Live Dignostic \n Video Call",
+                                  "Mobile Repair\nService",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.oxanium(
                                     color: kPrimaryColor,
@@ -200,6 +200,111 @@ class HomeView extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Padding(
+                      padding: EdgeInsets.only(
+                        top: 0.02.sh,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const TowingScreenServices(
+                                            // userLatLng: <String, double>{
+                                            //   "lat": 24.7732,
+                                            //   "lng": 67.0762,
+                                            // },
+                                            ))),
+                            child: Container(
+                              height: 0.3.sh,
+                              width: 0.4.sw,
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                      "assets/images/repairEstimate.png",
+                                      height: 0.2.sh,
+                                      width: 0.2.sw,
+                                      fit: BoxFit.contain),
+                                  Text(
+                                    "Realtime-Repair Estimate Service",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.oxanium(
+                                      color: kPrimaryColor,
+                                      fontSize: 0.04.sw,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const TowingScreenServices(
+                                            // userLatLng: <String, double>{
+                                            //   "lat": 24.7732,
+                                            //   "lng": 67.0762,
+                                            // },
+                                            ))),
+                            child: Container(
+                              height: 0.3.sh,
+                              width: 0.4.sw,
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/towing.png",
+                                    height: 0.2.sh,
+                                    width: 0.2.sw,
+                                  ),
+                                  Text(
+                                    "Live Dignostic\nService",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.oxanium(
+                                      color: kPrimaryColor,
+                                      fontSize: 0.04.sw,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
                 ])
           ],
         ));

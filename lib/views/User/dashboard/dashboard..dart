@@ -9,6 +9,7 @@ import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/controller/dashboard_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/workshop/workshop_view.dart';
+import 'package:car_fix_up/views/schedule_appointment/appointments_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -223,9 +224,9 @@ class DashboardView extends GetView<DashboardController> {
                 },
                 children: const [
                   HomeView(),
-                  ChatListView(),
+                  AppointmentsListScreen(),
                   WorkshopView(),
-                  ChatListView()
+                  ChatListView(),
                 ],
               ),
               // Custom floating bottom bar with animated page indicator
@@ -274,12 +275,12 @@ class DashboardView extends GetView<DashboardController> {
                                   controller: dashboardController,
                                   pageController: _pageController),
                               _buildNavItem(
-                                  icon: kdignosticIcon,
+                                  icon: kCarRepairIcon,
                                   index: 2,
                                   controller: dashboardController,
                                   pageController: _pageController),
                               _buildNavItem(
-                                  icon: kCarRepairIcon,
+                                  icon: kChatIcon,
                                   index: 3,
                                   controller: dashboardController,
                                   pageController: _pageController),

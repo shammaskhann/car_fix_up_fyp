@@ -44,8 +44,7 @@ class AppointmentScheduleController extends GetxController {
 
   void confirmAppointment(Appointment appointment) async {
     isLoading.value = true;
-    await _appointmentService
-        .confirmTheOnHoldAppointment(appointment.appointmentId);
+    await _appointmentService.confirmTheOnHoldAppointment(appointment);
     isLoading.value = false;
   }
 
@@ -59,5 +58,17 @@ class AppointmentScheduleController extends GetxController {
 
   void completeTheAppointment(String appointmentId) {
     _appointmentService.completeTheAppointment(appointmentId);
+  }
+
+  Future<List<Appointment>> getUserOnHoldAppointments() async {
+    return await _appointmentService.getUserAllRequestedAppointments();
+  }
+
+  Future<List<Appointment>> getUserConfirmAppointments() async {
+    return await _appointmentService.getUserAllCorfirmedAppointments();
+  }
+
+  Future<List<Appointment>> getUserCompletedAppointments() async {
+    return await _appointmentService.getUserAllCompletedAppointments();
   }
 }

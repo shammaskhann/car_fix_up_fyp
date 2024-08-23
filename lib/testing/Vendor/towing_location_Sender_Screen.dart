@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:developer';
 
@@ -13,7 +16,7 @@ class _LocationSenderScreenState extends State<LocationSenderScreen> {
   late Location location;
   late LocationData currentLocation;
   late Stream<LocationData> locationStream;
-
+  final mapController = Completer<GoogleMapController>();
   @override
   void initState() {
     super.initState();
@@ -54,17 +57,29 @@ class _LocationSenderScreenState extends State<LocationSenderScreen> {
         'active_location':
             GeoPoint(currentLocation.latitude!, currentLocation.longitude!)
       });
+      mapController.future.then((controller) {
+        controller.animateCamera(CameraUpdate.newLatLng(
+            LatLng(currentLocation.latitude!, currentLocation.longitude!)));
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Send Location'),
-      ),
-      body: Center(
-        child: Text('Sending location to Firestore...'),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(30.3308401, 71.247499),
+          zoom: 14.4746,
+        ),
+        onMapCreated: (GoogleMapController controller) {
+          mapController.complete(controller);
+        },
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
+        mapType: MapType.normal,
+        compassEnabled: true,
+        zoomControlsEnabled: true,
       ),
     );
   }

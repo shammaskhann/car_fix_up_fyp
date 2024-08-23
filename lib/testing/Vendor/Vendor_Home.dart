@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:developer';
 
 enum AppointmentStatus { onHold, confirmed, completed }
 
@@ -21,239 +22,241 @@ class VendorHomeview extends StatelessWidget {
     RxString _selectedStatus = "onHold".obs;
 
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Container(
-        height: 1.sh,
-        width: 1.sw,
-        color: Colors.grey.shade300,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ClipPath(
-              clipper: BottomCurveClipper(),
-              child: Container(
-                height: 0.25.sh,
-                width: 1.sw,
-                color: kPrimaryColor,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 0.07.sh),
-                      child: Text(
-                        "Welcome Vendor",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 25.sp,
-                          fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Container(
+          height: 1.sh,
+          width: 1.sw,
+          color: Colors.grey.shade200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ClipPath(
+                clipper: BottomCurveClipper(),
+                child: Container(
+                  height: 0.25.sh,
+                  width: 1.sw,
+                  color: kPrimaryColor,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 0.07.sh),
+                        child: Text(
+                          "Welcome Vendor",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 25.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 0.02.sh),
-                      child: Text(
-                        "Manage your appointments here",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 18.sp,
+                      Padding(
+                        padding: EdgeInsets.only(top: 0.02.sh),
+                        child: Text(
+                          "Manage your appointments here",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 18.sp,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            //create a row with three buttons
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 0.03.sw,
-              ),
-              child: Container(
-                height: 0.06.sh,
-                width: 1.sw,
-                decoration: BoxDecoration(
-                  color: kWhiteColor,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: kBlackText.withOpacity(0.1),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Obx(() => Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _selectedStatus.value = "onHold";
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                  color: _selectedStatus.value == "onHold"
-                                      ? kPrimaryColor
-                                      : kWhiteColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      bottomLeft: Radius.circular(8))),
-                              child: Center(
-                                  child: Text(
-                                "On Hold",
-                                style: GoogleFonts.oxanium(
-                                    fontSize: 14.sp,
-                                    fontWeight:
-                                        _selectedStatus.value == "onHold"
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 0.03.sw),
+                child: Container(
+                  height: 0.06.sh,
+                  width: 1.sw,
+                  decoration: BoxDecoration(
+                    color: kWhiteColor,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kBlackText.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Obx(() => Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _selectedStatus.value = "onHold";
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
                                     color: _selectedStatus.value == "onHold"
-                                        ? kWhiteColor
-                                        : kBlackText),
-                              )),
-                            ),
-                          ),
-                        )),
-                    Obx(() => Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _selectedStatus.value = "confirmed";
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
+                                        ? kPrimaryColor
+                                        : kWhiteColor,
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        bottomLeft: Radius.circular(8))),
+                                child: Center(
+                                    child: Text(
+                                  "On Hold",
+                                  style: GoogleFonts.oxanium(
+                                      fontSize: 14.sp,
+                                      fontWeight:
+                                          _selectedStatus.value == "onHold"
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                      color: _selectedStatus.value == "onHold"
+                                          ? kWhiteColor
+                                          : kBlackText),
+                                )),
                               ),
-                              decoration: BoxDecoration(
-                                  color: _selectedStatus.value == "confirmed"
-                                      ? kPrimaryColor
-                                      : kWhiteColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(0),
-                                      bottomLeft: Radius.circular(0))),
-                              child: Center(
-                                  child: Text(
-                                "Confirmed",
-                                style: GoogleFonts.oxanium(
-                                    fontSize: 14.sp,
-                                    fontWeight:
-                                        _selectedStatus.value == "confirmed"
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
+                            ),
+                          )),
+                      Obx(() => Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _selectedStatus.value = "confirmed";
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
                                     color: _selectedStatus.value == "confirmed"
-                                        ? kWhiteColor
-                                        : kBlackText),
-                              )),
-                            ),
-                          ),
-                        )),
-                    Obx(() => Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _selectedStatus.value = "completed";
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
+                                        ? kPrimaryColor
+                                        : kWhiteColor,
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(0),
+                                        bottomLeft: Radius.circular(0))),
+                                child: Center(
+                                    child: Text(
+                                  "Confirmed",
+                                  style: GoogleFonts.oxanium(
+                                      fontSize: 14.sp,
+                                      fontWeight:
+                                          _selectedStatus.value == "confirmed"
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                      color:
+                                          _selectedStatus.value == "confirmed"
+                                              ? kWhiteColor
+                                              : kBlackText),
+                                )),
                               ),
-                              decoration: BoxDecoration(
-                                  color: _selectedStatus.value == "completed"
-                                      ? kPrimaryColor
-                                      : kWhiteColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(8),
-                                      bottomRight: Radius.circular(8))),
-                              child: Center(
-                                  child: Text(
-                                "Completed",
-                                style: GoogleFonts.oxanium(
-                                    fontSize: 14.sp,
-                                    fontWeight:
-                                        _selectedStatus.value == "completed"
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                    color: _selectedStatus.value == "completed"
-                                        ? kWhiteColor
-                                        : kBlackText),
-                              )),
                             ),
-                          ),
-                        )),
-                  ],
+                          )),
+                      Obx(() => Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _selectedStatus.value = "completed";
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 0,
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                    color: _selectedStatus.value == "completed"
+                                        ? kPrimaryColor
+                                        : kWhiteColor,
+                                    borderRadius: const BorderRadius.only(
+                                        topRight: Radius.circular(8),
+                                        bottomRight: Radius.circular(8))),
+                                child: Center(
+                                    child: Text(
+                                  "Completed",
+                                  style: GoogleFonts.oxanium(
+                                      fontSize: 14.sp,
+                                      fontWeight:
+                                          _selectedStatus.value == "completed"
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                      color:
+                                          _selectedStatus.value == "completed"
+                                              ? kWhiteColor
+                                              : kBlackText),
+                                )),
+                              ),
+                            ),
+                          )),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Obx(
-              () => StreamBuilder(
-                stream: _selectedStatus.value == "onHold"
-                    ? _appointmentScheduleController.getOnHoldAppointments()
-                    : _selectedStatus.value == "confirmed"
-                        ? _appointmentScheduleController
-                            .getConfirmedAppointments()
-                        : _appointmentScheduleController
-                            .getCompletedAppointments(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 0.2.sh),
-                        child: const CircularProgressIndicator(
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.data == null) {
-                    return Center(
-                      child: Text(
-                        "No Appointments",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "Error: ${snapshot.error}",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    List<Appointment>? appointments = snapshot.data;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: appointments!.length,
-                      itemBuilder: (context, index) {
-                        return requestAppointment(
-                          appointments[index],
-                          _appointmentScheduleController,
-                          _selectedStatus.value == "confirmed" ? true : false,
+              Expanded(
+                child: Obx(
+                  () => StreamBuilder<List<Appointment>>(
+                    stream: _selectedStatus.value == "onHold"
+                        ? _appointmentScheduleController.getOnHoldAppointments()
+                        : _selectedStatus.value == "confirmed"
+                            ? _appointmentScheduleController
+                                .getConfirmedAppointments()
+                            : _appointmentScheduleController
+                                .getCompletedAppointments(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),
                         );
-                      },
-                    );
-                  }
-                  return Container();
-                },
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No Appointments",
+                            style: GoogleFonts.oxanium(
+                              color: kBlackText,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            "Error: ${snapshot.error}",
+                            style: GoogleFonts.oxanium(
+                              color: kBlackText,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        log("Data: ${snapshot.data}");
+                        List<Appointment>? appointments = snapshot.data;
+                        return ListView.builder(
+                          padding: EdgeInsets.only(bottom: 0.1.sh),
+                          itemCount: appointments!.length,
+                          itemBuilder: (context, index) {
+                            return requestAppointment(
+                              appointments[index],
+                              _appointmentScheduleController,
+                              _selectedStatus.value == "confirmed"
+                                  ? true
+                                  : false,
+                            );
+                          },
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   Widget requestAppointment(

@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
+import 'package:car_fix_up/services/firebase/user/user_services.dart';
 import 'package:car_fix_up/services/firebase/vendors/vendor_services.dart';
+import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -101,13 +105,13 @@ class AppointmentService {
     // }
   }
 
-  Future<void> confirmTheOnHoldAppointment(String appointmentId) async {
+  Future<void> confirmTheOnHoldAppointment(Appointment appointmentId) async {
     try {
       final appointment = await _firestore
           .collection("vendors")
           .doc(_auth.currentUser?.uid)
           .collection("on_hold_appointments")
-          .doc(appointmentId)
+          .doc(appointmentId.appointmentId)
           .get();
       await _firestore
           .collection("vendors")
@@ -118,9 +122,21 @@ class AppointmentService {
           .collection("vendors")
           .doc(_auth.currentUser?.uid)
           .collection("on_hold_appointments")
-          .doc(appointmentId)
+          .doc(appointmentId.appointmentId)
           .delete();
+      String deviceToken =
+          await UserServices().getUserDeviceTokenByUid(appointmentId.userUid);
+      log("deviceToken: $deviceToken");
+      await PushNotification.sendNotification(
+          deviceToken,
+          "Appointment Confirmed",
+          "Your appointment has been confirmed by the vendor", {
+        "type": "appointment",
+        "date": appointment.data()!["dateOfAppointment"],
+        "time": appointment.data()!["timeSlot"],
+      });
     } catch (e) {
+      log("error: $e");
       throw e;
     }
   }
@@ -144,7 +160,17 @@ class AppointmentService {
           .collection("confirmed_appointments")
           .doc(appointmentId)
           .delete();
+      String deviceToken = await UserServices()
+          .getUserDeviceTokenByUid(appointment.data()!["userUid"]);
+      log("deviceToken: $deviceToken");
+      await PushNotification.sendNotification(
+          deviceToken,
+          "Appointment Completed",
+          "Your appointment has been mark completed by the vendor", {
+        "type": "appointment",
+      });
     } catch (e) {
+      log("error: $e");
       throw e;
     }
   }
@@ -152,6 +178,7 @@ class AppointmentService {
   Future<List<Appointment>> getUserAllCorfirmedAppointments() async {
     VendorServices vendorServices = VendorServices();
     final List<String> vendorUids = await vendorServices.getAllVendorsUids();
+    log("vendorUids: $vendorUids");
     List<Appointment> allAppointments = [];
     for (String vendorUid in vendorUids) {
       final snapshot = await _firestore
@@ -165,5 +192,69 @@ class AppointmentService {
           .toList());
     }
     return allAppointments;
+  }
+
+  Future<List<Appointment>> getUserAllRequestedAppointments() async {
+    VendorServices vendorServices = VendorServices();
+    final List<String> vendorUids = await vendorServices.getAllVendorsUids();
+    log("vendorUids: $vendorUids");
+    List<Appointment> allAppointments = [];
+    for (String vendorUid in vendorUids) {
+      final snapshot = await _firestore
+          .collection("vendors")
+          .doc(vendorUid)
+          .collection("on_hold_appointments")
+          .where("userUid", isEqualTo: _auth.currentUser?.uid)
+          .get();
+      allAppointments.addAll(snapshot.docs
+          .map((doc) => Appointment.fromMap(doc.data(), doc.id))
+          .toList());
+    }
+    return allAppointments;
+  }
+
+  Future<List<Appointment>> getUserAllCompletedAppointments() async {
+    VendorServices vendorServices = VendorServices();
+    final List<String> vendorUids = await vendorServices.getAllVendorsUids();
+    log("vendorUids: $vendorUids");
+    List<Appointment> allAppointments = [];
+    for (String vendorUid in vendorUids) {
+      final snapshot = await _firestore
+          .collection("vendors")
+          .doc(vendorUid)
+          .collection("completed_appointments")
+          .where("userUid", isEqualTo: _auth.currentUser?.uid)
+          .get();
+      allAppointments.addAll(snapshot.docs
+          .map((doc) => Appointment.fromMap(doc.data(), doc.id))
+          .toList());
+    }
+    return allAppointments;
+  }
+
+  Future<void> cancelTheAppointment(String appointmentId) async {
+    try {
+      //get all vendor uid first
+      VendorServices vendorServices = VendorServices();
+      final List<String> vendorUids = await vendorServices.getAllVendorsUids();
+      for (String vendorUid in vendorUids) {
+        final appointment = await _firestore
+            .collection("vendors")
+            .doc(vendorUid)
+            .collection("on_hold_appointments")
+            .doc(appointmentId)
+            .get();
+        if (appointment.exists) {
+          await _firestore
+              .collection("vendors")
+              .doc(vendorUid)
+              .collection("on_hold_appointments")
+              .doc(appointmentId)
+              .delete();
+        }
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 }

@@ -65,4 +65,14 @@ class UserServices extends GetxController {
       return [];
     }
   }
+
+  Future<String> getUserDeviceTokenByUid(String uid) async {
+    try {
+      final user = await _db.collection('users').doc(uid).get();
+      return user.data()!['deviceToken'];
+    } catch (e) {
+      print(e);
+      return '';
+    }
+  }
 }
