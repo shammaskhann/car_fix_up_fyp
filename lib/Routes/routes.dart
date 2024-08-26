@@ -1,13 +1,17 @@
 import 'package:car_fix_up/model/Vendor/vendor.model.dart';
-import 'package:car_fix_up/testing/Vendor/towing_location_Sender_Screen.dart';
-import 'package:car_fix_up/testing/Vendor/vendor_chatList_screen.dart';
+import 'package:car_fix_up/testing/Vendor/towing_location_sender/towing_location_Sender_Screen.dart';
+import 'package:car_fix_up/testing/Vendor/vendor_chat_list/vendor_chatList_screen.dart';
 import 'package:car_fix_up/testing/vendor_dashboard.dart';
 import 'package:car_fix_up/views/User/auth/login_view.dart';
 import 'package:car_fix_up/views/User/auth/signup_view.dart';
 import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:car_fix_up/views/User/chat/chat_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/dashboard..dart';
-import 'package:car_fix_up/views/User/home/screen/live-dignostic_screen.dart/live-dignostic.dart';
+import 'package:car_fix_up/views/User/home/screen/live-dignostic_screen/live-dignostic.dart';
+import 'package:car_fix_up/views/User/home/screen/remote_repair_screen/remote_repair_screen.dart';
+import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/repair_est_result.dart';
+import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/repair_est_screen.dart';
+import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/workshops_list_est.dart';
 import 'package:car_fix_up/views/components/onBoarding_screen.dart';
 import 'package:car_fix_up/views/components/splash_screen.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
@@ -90,19 +94,19 @@ class AppRoutes {
       //testing screen
       GetPage(
         name: RouteName.liveLocScreen,
-        page: (() => LocationSenderScreen()),
+        page: (() => const LocationSenderScreen()),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
       GetPage(
         name: RouteName.vendorsDashboard,
-        page: (() => VendorDashBoardScreen()),
+        page: (() => const VendorDashBoardScreen()),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
       GetPage(
         name: RouteName.vendorChatScreen,
-        page: () => VendorChatListScreen(),
+        page: () => const VendorChatListScreen(),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),
@@ -111,6 +115,36 @@ class AppRoutes {
         page: () => ScheduleAppointView(
           vendor: Get.arguments,
         ),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.repairEstimate,
+        page: () => RepairEstScreen(
+          vendor: Get.arguments,
+        ),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.remoteRepair,
+        page: () => const RemoteRepairScreen(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.repairEstResult,
+        page: () => RepairEstResultScreen(
+          vendorUid: Get.arguments["vendorUid"],
+          selectedEstimates: Get.arguments["selectedEstimates"],
+          totalCost: Get.arguments["totalCost"],
+        ),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+      GetPage(
+        name: RouteName.repairEstWorkshopList,
+        page: () => const WorkshopsListEstScreem(),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       )
@@ -130,9 +164,11 @@ class RouteName {
   static const String profile = '/profile';
   static const String vendorProfile = '/vendor-profile';
   static const String liveDignostic = '/live-dignostic';
-
+  static const String repairEstimate = '/repair-estimate';
+  static const String remoteRepair = '/remote-repair';
   static const String scheduleAppoint = '/schedule-appoint';
-
+  static const String repairEstResult = "/repair-estimate-result";
+  static const String repairEstWorkshopList = '/repair-est-workshop-list';
   //testing screen
   static const String vendorsDashboard = '/vendors-dashboard';
   static const String liveLocScreen = '/live-loc-screen';

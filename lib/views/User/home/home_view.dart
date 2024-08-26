@@ -4,9 +4,10 @@ import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
-import 'package:car_fix_up/views/User/home/screen/towing_service_screen.dart';
+import 'package:car_fix_up/views/User/home/screen/towing_service/towing_service_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -42,14 +43,14 @@ class HomeView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.menu_rounded),
+                            icon: const Icon(Icons.menu_rounded),
                             onPressed: () {
                               Scaffold.of(context).openDrawer();
                             },
                             color: Colors.white,
                           ),
                           IconButton(
-                            icon: Icon(Icons.person),
+                            icon: const Icon(Icons.person),
                             onPressed: () {},
                             color: Colors.white,
                           ),
@@ -100,15 +101,16 @@ class HomeView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         InkWell(
-                          onTap: () => PushNotification.sendNotification(
-                              userController.deviceToken,
-                              "Live Dignostic Call Incoming",
-                              "A Customer is seeking a Live Dignostic on Video Call",
-                              {
-                                "notification_type": "CALL_NOTIFICATION",
-                                "callID": "sos_call",
-                                "userID": "102",
-                              }),
+                          onTap: () => Get.toNamed(RouteName.remoteRepair),
+                          // onTap: () => PushNotification.sendNotification(
+                          //     userController.deviceToken,
+                          //     "Live Dignostic Call Incoming",
+                          //     "A Customer is seeking a Live Dignostic on Video Call",
+                          //     {
+                          //       "notification_type": "CALL_NOTIFICATION",
+                          //       "callID": "sos_call",
+                          //       "userID": "102",
+                          //     }),
                           child: Container(
                             height: 0.3.sh,
                             width: 0.4.sw,
@@ -120,7 +122,7 @@ class HomeView extends StatelessWidget {
                                   color: Colors.grey.withOpacity(0.5),
                                   spreadRadius: 5,
                                   blurRadius: 7,
-                                  offset: Offset(0, 3),
+                                  offset: const Offset(0, 3),
                                 ),
                               ],
                             ),
@@ -171,7 +173,7 @@ class HomeView extends StatelessWidget {
                                   color: Colors.grey.withOpacity(0.5),
                                   spreadRadius: 5,
                                   blurRadius: 7,
-                                  offset: Offset(0, 3),
+                                  offset: const Offset(0, 3),
                                 ),
                               ],
                             ),
@@ -208,16 +210,9 @@ class HomeView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TowingScreenServices(
-                                            // userLatLng: <String, double>{
-                                            //   "lat": 24.7732,
-                                            //   "lng": 67.0762,
-                                            // },
-                                            ))),
+                            onTap: () => Get.toNamed(
+                              RouteName.repairEstWorkshopList,
+                            ),
                             child: Container(
                               height: 0.3.sh,
                               width: 0.4.sw,
@@ -229,7 +224,7 @@ class HomeView extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.5),
                                     spreadRadius: 5,
                                     blurRadius: 7,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   ),
                                 ],
                               ),
@@ -256,16 +251,8 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TowingScreenServices(
-                                            // userLatLng: <String, double>{
-                                            //   "lat": 24.7732,
-                                            //   "lng": 67.0762,
-                                            // },
-                                            ))),
+                            onTap: () => Get.toNamed(RouteName.videoCall,
+                                arguments: "sos_call"),
                             child: Container(
                               height: 0.3.sh,
                               width: 0.4.sw,
@@ -277,7 +264,7 @@ class HomeView extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.5),
                                     spreadRadius: 5,
                                     blurRadius: 7,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   ),
                                 ],
                               ),
@@ -285,10 +272,14 @@ class HomeView extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Image.asset(
-                                    "assets/images/towing.png",
-                                    height: 0.2.sh,
-                                    width: 0.2.sw,
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                                    child: SvgPicture.asset(
+                                      "assets/images/live_dignostic.svg",
+                                      height: 0.2.sh,
+                                      width: 0.2.sw,
+                                    ),
                                   ),
                                   Text(
                                     "Live Dignostic\nService",

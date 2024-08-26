@@ -4,6 +4,7 @@ import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:car_fix_up/views/User/workshop/controller/workshop_controller.dart';
 import 'package:car_fix_up/views/components/vendor_profile.dart';
+import 'package:car_fix_up/views/widgets/workshop_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -109,107 +110,15 @@ class WorkshopView extends StatelessWidget {
                     );
                   }
                   if (snapshot.hasData) {
-                    List<Vendor>? workshops = snapshot.data;
+                    List<Vendor>? vendors = snapshot.data;
                     return Expanded(
                       child: ListView.builder(
-                        itemCount: workshops!.length,
+                        itemCount: vendors!.length,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 0.05.sw,
-                            ),
-                            child: InkWell(
-                              onTap: () => Get.toNamed(RouteName.vendorProfile,
-                                  arguments: workshops[index]),
-                              child: Container(
-                                height: 0.15.sh,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(0.02.sw),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 0.5,
-                                      blurRadius: 7,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 0.34.sw,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(0.02.sw),
-                                            bottomLeft:
-                                                Radius.circular(0.02.sw)),
-                                        image: DecorationImage(
-                                          image: AssetImage(workshops[index]
-                                              .workshop
-                                              .imageUrl),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 0.02.sw),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            workshops[index].workshop.name,
-                                            style: GoogleFonts.oxanium(
-                                              color: kBlackColor,
-                                              fontSize: 0.04.sw,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${workshops[index].workshop.area},${workshops[index].workshop.city}",
-                                            style: GoogleFonts.oxanium(
-                                              color: kBlackColor,
-                                              fontSize: 0.03.sw,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    //Rating
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 0.1.sw),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            avgRating(workshops[index])
-                                                .toString(),
-                                            style: GoogleFonts.oxanium(
-                                              color: kBlackColor,
-                                              fontSize: 0.04.sw,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.star,
-                                            color: kPrimaryColor,
-                                            size: 0.05.sw,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                          return WorkshopTile(
+                            vendor: vendors[index],
+                            onTap: () => Get.toNamed(RouteName.vendorProfile,
+                                arguments: vendors[index]),
                           );
                         },
                       ),

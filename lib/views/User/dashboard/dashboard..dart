@@ -288,45 +288,45 @@ class DashboardView extends GetView<DashboardController> {
                           )),
                     ),
                   )),
-              //SOS Button
-              Positioned(
-                bottom: 80,
-                right: 20,
-                child: InkWell(
-                  onTap: () {
-                    Get.toNamed(RouteName.videoCall, arguments: "sos_call");
-                  }, //SOS Call
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: kBlackColor,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: kPrimaryColor.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: -2,
-                          blurRadius: 10,
-                          offset: const Offset(0, -3),
-                        ),
-                      ],
-                      gradient: LinearGradient(
-                        colors: [kBlackColor, Colors.grey[800]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: SvgPicture.asset(kSOSIcon, height: 30, width: 30),
-                  ),
-                ),
-              )
+              // //SOS Button
+              // Positioned(
+              //   bottom: 80,
+              //   right: 20,
+              //   child: InkWell(
+              //     onTap: () {
+              //       Get.toNamed(RouteName.videoCall, arguments: "sos_call");
+              //     }, //SOS Call
+              //     child: Container(
+              //       padding: const EdgeInsets.all(10),
+              //       height: 50,
+              //       width: 50,
+              //       decoration: BoxDecoration(
+              //         color: kBlackColor,
+              //         borderRadius: BorderRadius.circular(25),
+              //         boxShadow: [
+              //           BoxShadow(
+              //             color: kPrimaryColor.withOpacity(0.5),
+              //             spreadRadius: 5,
+              //             blurRadius: 7,
+              //             offset: const Offset(0, 3),
+              //           ),
+              //           BoxShadow(
+              //             color: Colors.black.withOpacity(0.2),
+              //             spreadRadius: -2,
+              //             blurRadius: 10,
+              //             offset: const Offset(0, -3),
+              //           ),
+              //         ],
+              //         gradient: LinearGradient(
+              //           colors: [kBlackColor, Colors.grey[800]!],
+              //           begin: Alignment.topLeft,
+              //           end: Alignment.bottomRight,
+              //         ),
+              //       ),
+              //       child: SvgPicture.asset(kSOSIcon, height: 30, width: 30),
+              //     ),
+              //   ),
+              // )
             ],
           ),
         ));

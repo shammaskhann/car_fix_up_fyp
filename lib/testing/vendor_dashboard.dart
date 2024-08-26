@@ -1,7 +1,6 @@
 import 'package:car_fix_up/resources/constatnt.dart';
-import 'package:car_fix_up/testing/Vendor/Vendor_Home.dart';
-import 'package:car_fix_up/testing/Vendor/towing_location_Sender_Screen.dart';
-import 'package:car_fix_up/testing/Vendor/vendor_chatList_screen.dart';
+import 'package:car_fix_up/testing/Vendor/home/Vendor_Home.dart';
+import 'package:car_fix_up/testing/Vendor/towing_location_sender/towing_location_Sender_Screen.dart';
 import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';

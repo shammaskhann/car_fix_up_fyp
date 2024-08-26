@@ -265,7 +265,7 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
 
   void updateTowTruckMarker(LatLng latLng) async {
     final Uint8List markerIcon =
-        await getBytesFromAsset('assets/images/tow_truck.png', 200);
+        await getBytesFromAsset('assets/images/tow_truck.png', 100);
     setState(() {
       _markers.add(
         Marker(
@@ -281,7 +281,7 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: latLng,
-          zoom: 14.0,
+          zoom: 16.0,
         ),
       ),
     );

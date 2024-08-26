@@ -13,9 +13,6 @@ class WorkshopController extends GetxController {
   Future<List<Vendor>?> getAllWorkshop() async {
     try {
       vendors = await _vendorServices.getAllVendors();
-      // log(vendors[0].workshopReviews[0].toJson().toString());
-      // final workshopList = vendors.map((vendor) => vendor.workshop).toList();
-      // return workshopList;
       return vendors;
     } catch (e) {
       log(e.toString(), name: 'WorkshopController');

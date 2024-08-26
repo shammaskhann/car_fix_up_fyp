@@ -7,6 +7,7 @@ class Appointment {
   final String vendorUid;
   final String userCarPlate;
   final DateTime dateOfAppointment;
+  final bool isReviewed;
   final String timeSlot;
   final bool isCanceled;
 
@@ -17,6 +18,7 @@ class Appointment {
     required this.vendorUid,
     required this.userCarPlate,
     required this.dateOfAppointment,
+    required this.isReviewed,
     required this.timeSlot,
     required this.isCanceled,
   });
@@ -30,6 +32,7 @@ class Appointment {
       vendorUid: data['vendorUid'] ?? '',
       userCarPlate: data['userCarPlate'] ?? '',
       dateOfAppointment: (data['dateOfAppointment'] as Timestamp).toDate(),
+      isReviewed: data['isReviewed'] ?? false,
       timeSlot: data['timeSlot'] ?? '',
       isCanceled: data['isCanceled'] ?? false,
     );
@@ -43,6 +46,7 @@ class Appointment {
       'vendorUid': vendorUid,
       'userCarPlate': userCarPlate,
       'dateOfAppointment': dateOfAppointment,
+      'isReviewed': isReviewed,
       'timeSlot': timeSlot,
       'isCanceled': isCanceled,
     };

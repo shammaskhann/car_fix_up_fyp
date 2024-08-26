@@ -23,6 +23,7 @@ class AppointmentScheduleController extends GetxController {
         vendorUid: vendorUid,
         userCarPlate: carPlate,
         dateOfAppointment: finalDateTime,
+        isReviewed: false,
         timeSlot: DateFormat('HH:mm').format(finalDateTime),
         isCanceled: false,
       ),
