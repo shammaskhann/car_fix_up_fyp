@@ -55,15 +55,16 @@ class AuthServices {
         });
       }
       if (userType == 'vendor') {
-        await _db.collection('vendors').doc(userCredential.user!.uid).set({
-          'name': name,
-          'email': email,
-          'password': password,
-          'phone': phone,
-          'uid': userCredential.user!.uid,
-          'deviceToken': deviceToken,
-          'userType': userType,
-        });
+        // await _db.collection('vendors').doc(userCredential.user!.uid).set({
+        //   'name': name,
+        //   'email': email,
+        //   'password': password,
+        //   'phone': phone,
+        //   'uid': userCredential.user!.uid,
+        //   'deviceToken': deviceToken,
+        //   'userType': userType,
+        // });
+        throw UnimplementedError();
       }
       return true;
     } on FirebaseAuthException catch (e) {

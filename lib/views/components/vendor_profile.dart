@@ -446,7 +446,11 @@ class VendorProfile extends StatelessWidget {
                 child: CustomButton(
                   text: "Schedule Visit",
                   onPressed: () {
-                    Get.toNamed(RouteName.scheduleAppoint, arguments: vendor);
+                    Get.toNamed(RouteName.scheduleAppoint, arguments: {
+                      "vendor": vendor,
+                      "isMobileRepair": false,
+                      "loc": null
+                    });
                   },
                   borderRadius: 5,
                   textColor: kWhiteColor,

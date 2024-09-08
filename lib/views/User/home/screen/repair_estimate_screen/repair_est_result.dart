@@ -115,7 +115,11 @@ class RepairEstResultScreen extends StatelessWidget {
                     VendorServices vendorServices = VendorServices();
                     var vendor = await vendorServices.getVendorByUid(vendorUid);
 
-                    Get.toNamed(RouteName.scheduleAppoint, arguments: vendor);
+                    Get.toNamed(RouteName.scheduleAppoint, arguments: {
+                      "vendor": vendor,
+                      "isMobileRepair": false,
+                      "loc": null,
+                    });
                     isLoading.value = false;
                   },
                   borderRadius: 5,

@@ -12,10 +12,12 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:googleapis/admob/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:time_slot/time_slot_from_list.dart';
@@ -24,7 +26,14 @@ import '../../controller/user_controller.dart';
 
 class ScheduleAppointView extends StatefulWidget {
   final Vendor vendor;
-  const ScheduleAppointView({required this.vendor, super.key});
+  bool isMobileRepair = false;
+  LatLng? loc;
+  ScheduleAppointView({
+    super.key,
+    required this.vendor,
+    this.isMobileRepair = false,
+    this.loc,
+  });
 
   @override
   _ScheduleAppointViewState createState() => _ScheduleAppointViewState();
@@ -83,74 +92,35 @@ class _ScheduleAppointViewState extends State<ScheduleAppointView> {
   Widget build(BuildContext context) {
     AppointmentScheduleController controller =
         Get.put(AppointmentScheduleController());
+    final TextEditingController carPlateController = TextEditingController();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: kBlackColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: kWhiteColor),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        title: Text(
+          'Schedule Appointment',
+          style: GoogleFonts.oxanium(
+            fontSize: 18.sp,
+            color: kWhiteColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Container(
-          height: 1.sh,
+          height: 0.9.sh,
           width: 1.sw,
           color: kWhiteColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipPath(
-                clipper: BottomCurveClipper(),
-                child: Container(
-                  height: 0.25.sh,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [kBlackColor, Colors.grey[800]!]),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: kWhiteColor,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.notifications,
-                                color: kWhiteColor,
-                              ),
-                              onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => NotificationView(),
-                                //   ),
-                                // );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          'Schedule Appointment',
-                          style: GoogleFonts.oxanium(
-                            fontSize: 24.sp,
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               Padding(
-                padding: const EdgeInsets.only(left: 15.0),
+                padding: const EdgeInsets.only(top: 15, left: 15.0),
                 child: Text(
                   'SELECT DATE & TIME',
                   style: GoogleFonts.oxanium(
@@ -216,52 +186,106 @@ class _ScheduleAppointViewState extends State<ScheduleAppointView> {
                   },
                 ),
               ),
+              //TextField For Car No Plate
+              Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 15),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Car Number Plate',
+                          style: GoogleFonts.oxanium(
+                            fontSize: 14.sp,
+                            color: kBlackColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        TextField(
+                          controller: carPlateController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-Z0-9]')),
+                            LengthLimitingTextInputFormatter(7),
+                            CarPlateTextInputFormatter(),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'CAR-1234',
+                            hintStyle: GoogleFonts.oxanium(
+                              fontSize: 14.sp,
+                              color: kGreyText,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ])),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: CustomButton(
-                  borderRadius: 10,
-                  text: 'Request Appointment',
-                  onPressed: () {
-                    if (selectedTime == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please select a time slot.'),
-                        ),
+                child: Obx(
+                  () => CustomButton(
+                    isLoading: controller.isLoading.value,
+                    borderRadius: 10,
+                    text: 'Request Appointment',
+                    onPressed: () {
+                      if (selectedTime == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a time slot.'),
+                          ),
+                        );
+                        return;
+                      }
+                      if (carPlateController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Please enter your car number plate.'),
+                          ),
+                        );
+                        return;
+                      }
+                      DateTime finalDateTime = DateTime(
+                        selectedDate.year,
+                        selectedDate.month,
+                        selectedDate.day,
+                        selectedTime!.hour,
+                        selectedTime!.minute,
                       );
-                      return;
-                    }
-                    DateTime finalDateTime = DateTime(
-                      selectedDate.year,
-                      selectedDate.month,
-                      selectedDate.day,
-                      selectedTime!.hour,
-                      selectedTime!.minute,
-                    );
-                    log(finalDateTime.toString());
-                    log("data ${DateFormat('yyyy-MM-dd').format(finalDateTime)} , ${DateFormat('HH:mm').format(finalDateTime)}");
-                    controller.requestAppointment(widget.vendor.deviceToken,
-                        widget.vendor.uid, finalDateTime, "1234");
+                      log(finalDateTime.toString());
+                      log("data ${DateFormat('yyyy-MM-dd').format(finalDateTime)} , ${DateFormat('HH:mm').format(finalDateTime)}");
+                      controller.requestAppointment(
+                          widget.vendor.deviceToken,
+                          widget.vendor.uid,
+                          finalDateTime,
+                          carPlateController.text,
+                          widget.isMobileRepair,
+                          widget.loc);
 
-                    // PushNotification.sendNotification(
-                    // widget.vendor.deviceToken,
-                    // "New Appointment Request",
-                    // "You have a new appointment request on ${DateFormat('yyyy-MM-dd').format(finalDateTime)} at ${DateFormat('HH:mm').format(finalDateTime)}. Please review and accept or reject the appointment.",
-                    // {
-                    //   "type": "appointment",
-                    //   "date":
-                    //       DateFormat('yyyy-MM-dd').format(finalDateTime),
-                    //   "time": DateFormat('HH:mm').format(finalDateTime),
-                    // });
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => HomeView(),
-                    //   ),
-                    // );
-                  },
-                  textColor: kWhiteText,
-                  buttonColor: kPrimaryColor,
+                      // PushNotification.sendNotification(
+                      // widget.vendor.deviceToken,
+                      // "New Appointment Request",
+                      // "You have a new appointment request on ${DateFormat('yyyy-MM-dd').format(finalDateTime)} at ${DateFormat('HH:mm').format(finalDateTime)}. Please review and accept or reject the appointment.",
+                      // {
+                      //   "type": "appointment",
+                      //   "date":
+                      //       DateFormat('yyyy-MM-dd').format(finalDateTime),
+                      //   "time": DateFormat('HH:mm').format(finalDateTime),
+                      // });
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => HomeView(),
+                      //   ),
+                      // );
+                    },
+                    textColor: kWhiteText,
+                    buttonColor: kPrimaryColor,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -269,6 +293,32 @@ class _ScheduleAppointViewState extends State<ScheduleAppointView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CarPlateTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text.toUpperCase();
+    final buffer = StringBuffer();
+    int selectionIndex = newValue.selection.end;
+
+    for (int i = 0; i < text.length; i++) {
+      if (i == 3) {
+        buffer.write('-');
+        if (i <= selectionIndex) selectionIndex++;
+      }
+      buffer.write(text[i]);
+    }
+
+    final formattedText = buffer.toString();
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: selectionIndex),
     );
   }
 }

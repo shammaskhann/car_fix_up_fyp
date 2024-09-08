@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
             notification.title!, notification.body!, message.data);
       }
     });
-
+    
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       log("===Incoming message===");

@@ -105,6 +105,7 @@ class ChatListView extends StatelessWidget {
                     ? VendorServices().getAllVendors()
                     : UserServices().getAllUsers(),
                 builder: (context, snapshot) {
+                  log('User Type: ${userController.userType}');
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),

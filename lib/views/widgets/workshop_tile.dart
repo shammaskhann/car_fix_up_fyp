@@ -83,7 +83,7 @@ class WorkshopTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      avgRating(vendor).toString(),
+                      avgRating(vendor).toStringAsFixed(2),
                       style: GoogleFonts.oxanium(
                         color: kBlackColor,
                         fontSize: 0.04.sw,

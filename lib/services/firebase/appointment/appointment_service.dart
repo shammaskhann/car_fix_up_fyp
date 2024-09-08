@@ -1,11 +1,16 @@
 import 'dart:developer';
 
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
+import 'package:car_fix_up/model/Vendor/vendor.model.dart';
+import 'package:car_fix_up/model/Vendor/workshop_review.model.dart';
 import 'package:car_fix_up/services/firebase/user/user_services.dart';
 import 'package:car_fix_up/services/firebase/vendors/vendor_services.dart';
 import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class AppointmentService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -253,6 +258,50 @@ class AppointmentService {
               .delete();
         }
       }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> giveReviewOfCompleted(
+      Appointment appointment, double rating, String review) async {
+    UserController userController = Get.find<UserController>();
+    try {
+      await _firestore
+          .collection("vendors")
+          .doc(appointment.vendorUid)
+          .collection("completed_appointments")
+          .doc(appointment.appointmentId)
+          .update({
+        "isReviewed": true,
+      });
+      //add review in vendor collection >> document (vendor uid)  >> then review array of Map (reviewer_name,rating,comment,appointment_docId)
+      await _firestore.collection("vendors").doc(appointment.vendorUid).update({
+        "reviews": FieldValue.arrayUnion([
+          {
+            "reviewer_name": userController.name,
+            "rating": rating,
+            "comment": review,
+            "appointment_docId": appointment.appointmentId,
+            "datePosted": DateTime.now().toString(),
+          }
+        ])
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<WorkshopReview> getTheReview(Appointment appointment) async {
+    try {
+      final snapshot = await _firestore
+          .collection("vendors")
+          .doc(appointment.vendorUid)
+          .get();
+      final Vendor vendor = Vendor.fromJson(snapshot.data()!);
+      final WorkshopReview reviews = vendor.workshopReviews.firstWhere(
+          (element) => element.appointmentDocId == appointment.appointmentId);
+      return reviews;
     } catch (e) {
       throw e;
     }

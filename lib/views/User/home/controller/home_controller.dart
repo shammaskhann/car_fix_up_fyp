@@ -37,7 +37,13 @@ class HomeController extends GetxController {
       uid: userData["uid"],
       email: userData['email'],
       name: userData['name'],
-      userType: UserType.user,
+      userType: (userData['userType'] == 'user' ||
+              userData['userType'] == UserType.user.toString())
+          ? UserType.user
+          : (userData['userType'] == 'vendor' ||
+                  userData['userType'] == UserType.vendor.toString())
+              ? UserType.vendor
+              : UserType.user,
       contactNo: userData['phone'],
       password: userData['password'],
       deviceToken: userData['deviceToken'],

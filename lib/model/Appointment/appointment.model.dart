@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Appointment {
   final String appointmentId;
@@ -10,6 +11,8 @@ class Appointment {
   final bool isReviewed;
   final String timeSlot;
   final bool isCanceled;
+  final bool isMobileRepair;
+  final LatLng? location;
 
   Appointment({
     required this.appointmentId,
@@ -21,6 +24,8 @@ class Appointment {
     required this.isReviewed,
     required this.timeSlot,
     required this.isCanceled,
+    required this.isMobileRepair,
+    this.location,
   });
 
   // Convert a Firestore document to an Appointment object
@@ -35,6 +40,10 @@ class Appointment {
       isReviewed: data['isReviewed'] ?? false,
       timeSlot: data['timeSlot'] ?? '',
       isCanceled: data['isCanceled'] ?? false,
+      isMobileRepair: data['isMobileRepair'] ?? false,
+      location: data['location'] != null
+          ? LatLng(data['location']['latitude'], data['location']['longitude'])
+          : null,
     );
   }
 
@@ -49,6 +58,13 @@ class Appointment {
       'isReviewed': isReviewed,
       'timeSlot': timeSlot,
       'isCanceled': isCanceled,
+      'isMobileRepair': isMobileRepair,
+      'location': location != null
+          ? {
+              'latitude': location!.latitude,
+              'longitude': location!.longitude,
+            }
+          : null,
     };
   }
 }

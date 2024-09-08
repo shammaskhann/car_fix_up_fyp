@@ -9,6 +9,7 @@ import 'package:car_fix_up/views/User/chat/chat_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/dashboard..dart';
 import 'package:car_fix_up/views/User/home/screen/live-dignostic_screen/live-dignostic.dart';
 import 'package:car_fix_up/views/User/home/screen/remote_repair_screen/remote_repair_screen.dart';
+import 'package:car_fix_up/views/User/home/screen/remote_repair_screen/workshopListSelect.dart';
 import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/repair_est_result.dart';
 import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/repair_est_screen.dart';
 import 'package:car_fix_up/views/User/home/screen/repair_estimate_screen/workshops_list_est.dart';
@@ -113,7 +114,9 @@ class AppRoutes {
       GetPage(
         name: RouteName.scheduleAppoint,
         page: () => ScheduleAppointView(
-          vendor: Get.arguments,
+          vendor: Get.arguments['vendor'],
+          isMobileRepair: Get.arguments['isMobileRepair'],
+          loc: Get.arguments['loc'],
         ),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
@@ -147,7 +150,15 @@ class AppRoutes {
         page: () => const WorkshopsListEstScreem(),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
-      )
+      ),
+      GetPage(
+        name: RouteName.remoteRepairWorkshopList,
+        page: () => Workshoplistselect(
+          Get.arguments,
+        ),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
     ];
   }
 }
@@ -169,6 +180,7 @@ class RouteName {
   static const String scheduleAppoint = '/schedule-appoint';
   static const String repairEstResult = "/repair-estimate-result";
   static const String repairEstWorkshopList = '/repair-est-workshop-list';
+  static const String remoteRepairWorkshopList = '/remote-repair-workshop-list';
   //testing screen
   static const String vendorsDashboard = '/vendors-dashboard';
   static const String liveLocScreen = '/live-loc-screen';

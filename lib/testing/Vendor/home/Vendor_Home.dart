@@ -2,6 +2,7 @@ import 'package:car_fix_up/controller/appointment_controller.dart';
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/shared/common_method.dart';
+import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +17,7 @@ class VendorHomeview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomeController _homeController = Get.put(HomeController());
     AppointmentScheduleController _appointmentScheduleController =
         Get.put(AppointmentScheduleController());
 
@@ -243,6 +245,9 @@ class VendorHomeview extends StatelessWidget {
                               _selectedStatus.value == "confirmed"
                                   ? true
                                   : false,
+                              _selectedStatus.value == "completed"
+                                  ? true
+                                  : false,
                             );
                           },
                         );
@@ -262,7 +267,8 @@ class VendorHomeview extends StatelessWidget {
   Widget requestAppointment(
       Appointment appointment,
       AppointmentScheduleController _appointmentScheduleController,
-      bool isConfirmationWidget) {
+      bool isConfirmationWidget,
+      bool isCompletedWidget) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 0.0, right: 10, left: 10),
       child: Container(
@@ -392,80 +398,84 @@ class VendorHomeview extends StatelessWidget {
             // Accept and Reject Button in a row at bottom stick
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
-              child: isConfirmationWidget
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            _appointmentScheduleController
-                                .completeTheAppointment(
-                                    appointment.appointmentId);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+              child: isCompletedWidget
+                  ? (appointment.isReviewed)
+                      ? Text("Reviewed")
+                      : Text("Not Reviewed")
+                  : isConfirmationWidget
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _appointmentScheduleController
+                                    .completeTheAppointment(
+                                        appointment.appointmentId);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kPrimaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                "Mark As Complete",
+                                style: GoogleFonts.oxanium(
+                                  color: kWhiteColor,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            "Mark As Complete",
-                            style: GoogleFonts.oxanium(
-                              color: kWhiteColor,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _appointmentScheduleController
+                                    .confirmAppointment(appointment);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kPrimaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                "Accept",
+                                style: GoogleFonts.oxanium(
+                                  color: kWhiteColor,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
-                          ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // _appointmentScheduleController
+                                //     .rejectTheOnHoldAppointment(
+                                //         appointments[index]
+                                //             .appointmentId);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kDangerColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                "Reject",
+                                style: GoogleFonts.oxanium(
+                                  color: kWhiteColor,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            _appointmentScheduleController
-                                .confirmAppointment(appointment);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            "Accept",
-                            style: GoogleFonts.oxanium(
-                              color: kWhiteColor,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // _appointmentScheduleController
-                            //     .rejectTheOnHoldAppointment(
-                            //         appointments[index]
-                            //             .appointmentId);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kDangerColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            "Reject",
-                            style: GoogleFonts.oxanium(
-                              color: kWhiteColor,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
             ),
             const SizedBox(
               height: 5,
