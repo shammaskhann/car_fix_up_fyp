@@ -64,7 +64,7 @@ class VendorProfile extends StatelessWidget {
                               color: kWhiteColor,
                             ),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Get.back();
                             },
                           ),
                           SizedBox(
@@ -125,13 +125,30 @@ class VendorProfile extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                vendor.workshop.name,
-                                style: GoogleFonts.oxanium(
-                                  color: kBlackColor,
-                                  fontSize: 0.05.sw,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    vendor.workshop.name,
+                                    style: GoogleFonts.oxanium(
+                                      color: kBlackColor,
+                                      fontSize: 0.05.sw,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 0.02.sw,
+                                  ),
+                                  InkWell(
+                                    onTap: () =>
+                                        Get.toNamed(RouteName.chat, arguments: {
+                                      'uid': vendor.uid,
+                                    }),
+                                    child: const Icon(
+                                      Icons.chat,
+                                      color: kPrimaryColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 height: 0.01.sh,
@@ -277,7 +294,9 @@ class VendorProfile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        avgRating().toStringAsFixed(1),
+                        vendor.workshopReviews.length > 1
+                            ? avgRating().toStringAsFixed(1)
+                            : "0.0",
                         style: GoogleFonts.oxanium(
                           color: kBlackColor,
                           fontSize: 0.04.sw,
@@ -302,17 +321,136 @@ class VendorProfile extends StatelessWidget {
               ),
             ),
             //Review List
-            Container(
-              padding: const EdgeInsets.only(top: 10),
-              height: 0.18.sh,
-              child: ListView.builder(
-                shrinkWrap: true,
-                // physics: const NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: vendor.workshopReviews.length,
-                itemBuilder: (context, index) {
-                  if (vendor.workshopReviews.isEmpty) {
-                    return Center(
+            (vendor.workshopReviews.length > 1)
+                ? Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    height: 0.18.sh,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      // physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: vendor.workshopReviews.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 0.01.sh, right: 0.04.sw, left: 0.03.sw),
+                          child: Container(
+                            padding: EdgeInsets.all(0.03.sw),
+                            height: 0.15.sh,
+                            width: 0.8.sw,
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    //Initials
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 0.05.sw,
+                                          child: Text(
+                                            vendor.workshopReviews[index]
+                                                .reviewerName[0],
+                                            style: GoogleFonts.oxanium(
+                                              color: kWhiteColor,
+                                              fontSize: 0.04.sw,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          vendor.workshopReviews[index]
+                                              .reviewerName,
+                                          style: GoogleFonts.oxanium(
+                                            color: kBlackColor,
+                                            fontSize: 0.04.sw,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    //Rating
+                                    Row(
+                                      children: [
+                                        Text(
+                                          vendor.workshopReviews[index].rating
+                                              .toString(),
+                                          style: GoogleFonts.oxanium(
+                                            color: kBlackColor,
+                                            fontSize: 0.04.sw,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.star,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                //Row for rating (show rating in number and star colored and default star)
+                                //Row for rating (show rating in number and star colored and default star)
+                                // Row(
+                                //   children: [
+                                //     Text(
+                                //       vendor.workshopReviews[index].rating.toString(),
+                                //       style: GoogleFonts.oxanium(
+                                //         color: kBlackColor,
+                                //         fontSize: 0.04.sw,
+                                //         fontWeight: FontWeight.bold,
+                                //       ),
+                                //     ),
+                                //     ...List.generate(5, (starIndex) {
+                                //       return Icon(
+                                //         Icons.star,
+                                //         color: starIndex <
+                                //                 vendor.workshopReviews[index].rating
+                                //             ? kPrimaryColor
+                                //             : Colors.grey,
+                                //       );
+                                //     }),
+                                //   ],
+                                // ),
+                                SizedBox(
+                                  height: 0.015.sh,
+                                ),
+
+                                Text(
+                                  vendor.workshopReviews[index].comment,
+                                  style: GoogleFonts.oxanium(
+                                    color: kBlackColor,
+                                    fontSize: 0.04.sw,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
                       child: Text(
                         "No Reviews Yet",
                         style: GoogleFonts.oxanium(
@@ -321,123 +459,9 @@ class VendorProfile extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  }
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: 0.01.sh, right: 0.04.sw, left: 0.03.sw),
-                    child: Container(
-                      padding: EdgeInsets.all(0.03.sw),
-                      height: 0.15.sh,
-                      width: 0.8.sw,
-                      decoration: BoxDecoration(
-                        color: kWhiteColor,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 5,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              //Initials
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 0.05.sw,
-                                    child: Text(
-                                      vendor.workshopReviews[index]
-                                          .reviewerName[0],
-                                      style: GoogleFonts.oxanium(
-                                        color: kWhiteColor,
-                                        fontSize: 0.04.sw,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    vendor.workshopReviews[index].reviewerName,
-                                    style: GoogleFonts.oxanium(
-                                      color: kBlackColor,
-                                      fontSize: 0.04.sw,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              //Rating
-                              Row(
-                                children: [
-                                  Text(
-                                    vendor.workshopReviews[index].rating
-                                        .toString(),
-                                    style: GoogleFonts.oxanium(
-                                      color: kBlackColor,
-                                      fontSize: 0.04.sw,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.star,
-                                    color: kPrimaryColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          //Row for rating (show rating in number and star colored and default star)
-                          //Row for rating (show rating in number and star colored and default star)
-                          // Row(
-                          //   children: [
-                          //     Text(
-                          //       vendor.workshopReviews[index].rating.toString(),
-                          //       style: GoogleFonts.oxanium(
-                          //         color: kBlackColor,
-                          //         fontSize: 0.04.sw,
-                          //         fontWeight: FontWeight.bold,
-                          //       ),
-                          //     ),
-                          //     ...List.generate(5, (starIndex) {
-                          //       return Icon(
-                          //         Icons.star,
-                          //         color: starIndex <
-                          //                 vendor.workshopReviews[index].rating
-                          //             ? kPrimaryColor
-                          //             : Colors.grey,
-                          //       );
-                          //     }),
-                          //   ],
-                          // ),
-                          SizedBox(
-                            height: 0.015.sh,
-                          ),
-
-                          Text(
-                            vendor.workshopReviews[index].comment,
-                            style: GoogleFonts.oxanium(
-                              color: kBlackColor,
-                              fontSize: 0.04.sw,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
+
             Spacer(),
             //Button
             Padding(

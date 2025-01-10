@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:car_fix_up/controller/appointment_controller.dart';
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
@@ -9,6 +11,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum AppointmentStatus { onHold, confirmed, completed }
 
@@ -240,6 +244,7 @@ class VendorHomeview extends StatelessWidget {
                           itemCount: appointments!.length,
                           itemBuilder: (context, index) {
                             return requestAppointment(
+                              context,
                               appointments[index],
                               _appointmentScheduleController,
                               _selectedStatus.value == "confirmed"
@@ -264,7 +269,18 @@ class VendorHomeview extends StatelessWidget {
     );
   }
 
+  void openGoogleMaps(double latitude, double longitude) async {
+    final String googleMapsUrl =
+        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving';
+    if (await canLaunch(googleMapsUrl)) {
+      await launch(googleMapsUrl);
+    } else {
+      throw 'Could not open Google Maps';
+    }
+  }
+
   Widget requestAppointment(
+      BuildContext context,
       Appointment appointment,
       AppointmentScheduleController _appointmentScheduleController,
       bool isConfirmationWidget,
@@ -276,7 +292,7 @@ class VendorHomeview extends StatelessWidget {
           vertical: 0.02.sh,
           horizontal: 0.02.sw,
         ),
-        height: 0.2.sh,
+        height: 0.24.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           color: kWhiteColor,
@@ -300,25 +316,29 @@ class VendorHomeview extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Name: ",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Row(
+                      children: [
+                        Text(
+                          "Customer: ",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      Text(
-                        appointment.userName,
-                        style: GoogleFonts.oxanium(
-                          color: kBlackText,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
+                        Text(
+                          appointment.userName,
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   //Date of Appointment
                   Row(
@@ -394,6 +414,73 @@ class VendorHomeview extends StatelessWidget {
                 ],
               ),
             ),
+            if (appointment.isMobileRepair)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Mobile Repair: ",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          appointment.isMobileRepair ? "Yes" : "No",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackText,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Location
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: kBlackText,
+                          size: 20.sp,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            openGoogleMaps(
+                              appointment.location?.latitude ?? 0,
+                              appointment.location?.longitude ?? 0,
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(0.01.sw),
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                                  Border.all(color: kPrimaryColor, width: 2),
+                            ),
+                            child: Text(
+                              "View on Map",
+                              style: GoogleFonts.oxanium(
+                                color: kPrimaryColor,
+                                fontSize: 0.03.sw,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             const Spacer(),
             // Accept and Reject Button in a row at bottom stick
             Padding(

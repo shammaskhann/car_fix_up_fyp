@@ -133,7 +133,7 @@
 //                           IconButton(
 //                             icon: Icon(Icons.arrow_back_ios),
 //                             onPressed: () {
-//                               Navigator.pop(context);
+//                               Get.back();
 //                             },
 //                             color: Colors.white,
 //                           ),
@@ -183,12 +183,14 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/firebase/towing_rides/towing_ride_servie.dart';
 import 'package:car_fix_up/shared/button.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
@@ -197,9 +199,11 @@ import 'dart:developer' as dev;
 
 class TowingRideScreen extends StatefulWidget {
   final LatLng userLocation;
+  final String requestId;
 
   const TowingRideScreen({
     required this.userLocation,
+    required this.requestId,
     super.key,
   });
 
@@ -214,9 +218,11 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
   Set<Polyline> _polylines = {};
   StreamSubscription<DocumentSnapshot>? locationSubscription;
   bool isCloseToLocation = false;
+  String? status;
 
   @override
   void initState() {
+    dev.log("Page Called: TowingRideScreen");
     super.initState();
     addPickupMarker();
     subscribeToLocationUpdates();
@@ -236,13 +242,15 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
 
   void subscribeToLocationUpdates() {
     locationSubscription = FirebaseFirestore.instance
-        .collection('towing_rides')
+        .collection('towing_requests')
         .doc(
-            'cKD8bJ50Q8W4JMNz_i-U1r:APA91bHYg9qGa3X-8U3EXI0kUk-kyD0nurWHYtUwYtCZoIt_pKZz3Z8qfqsXB8aizackMQ7IsrUZRDi4Y1z5-n7es2FNO85UrlacBgQ03lazhRldqXgGyPfQYBKZRlJUn5qLrhmIK0JO')
+          widget.requestId,
+        )
         .snapshots()
         .listen((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         GeoPoint activeLocation = documentSnapshot['active_location'];
+        status = documentSnapshot['status'];
         LatLng towTruckLocation =
             LatLng(activeLocation.latitude, activeLocation.longitude);
         //drawRoute(towTruckLocation);
@@ -404,7 +412,7 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
                           IconButton(
                             icon: Icon(Icons.arrow_back_ios),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Get.back();
                             },
                             color: Colors.white,
                           ),
@@ -431,7 +439,7 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
                 ),
               ),
             ),
-            if (isCloseToLocation)
+            if (isCloseToLocation && (status == "accepted"))
               Positioned(
                 bottom: 0.05.sh,
                 right: 0.0,
@@ -441,8 +449,27 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
                   child: CustomButton(
                     onPressed: () {
                       // Perform action when user is close to location
+                      TowingRideService().changeTowingStatusToInProgress(
+                        widget.requestId,
+                      );
                     },
                     text: "Confirm Arrival",
+                    buttonColor: kPrimaryColor,
+                    textColor: kWhiteColor,
+                    borderRadius: 10.0,
+                  ),
+                ),
+              ),
+            if (status == "in_progress")
+              Positioned(
+                bottom: 0.05.sh,
+                right: 0.0,
+                left: 0.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: CustomButton(
+                    onPressed: () {},
+                    text: "Ride in Progress",
                     buttonColor: kPrimaryColor,
                     textColor: kWhiteColor,
                     borderRadius: 10.0,

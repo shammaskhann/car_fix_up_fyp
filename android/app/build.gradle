@@ -32,8 +32,12 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -53,20 +57,21 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-           
         }
     }
 }
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
     // Other dependencies
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }
 
 configurations.all {
     resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
     resolutionStrategy.force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10"
-    
 }
+
 flutter {
     source = "../.."
 }

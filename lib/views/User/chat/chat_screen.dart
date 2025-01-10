@@ -68,7 +68,7 @@ class _ChatViewState extends State<ChatView> {
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                 ),
                 const SizedBox(

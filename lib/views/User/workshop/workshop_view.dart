@@ -115,10 +115,13 @@ class WorkshopView extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: vendors!.length,
                         itemBuilder: (context, index) {
-                          return WorkshopTile(
-                            vendor: vendors[index],
-                            onTap: () => Get.toNamed(RouteName.vendorProfile,
-                                arguments: vendors[index]),
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: WorkshopTile(
+                              vendor: vendors[index],
+                              onTap: () => Get.toNamed(RouteName.vendorProfile,
+                                  arguments: vendors[index]),
+                            ),
                           );
                         },
                       ),

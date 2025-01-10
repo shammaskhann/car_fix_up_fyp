@@ -21,6 +21,7 @@ const String kdignosticIcon = 'assets/images/diagnostic-car.svg';
 const String kCarRepairIcon = 'assets/images/car-repair.svg';
 const String kScheduledIcon = 'assets/images/schedule.svg';
 const String kChatIcon = 'assets/images/bubble-chat 1.svg';
+const String kProfileIcon = 'assets/images/user-bubble-svgrepo-com.svg';
 
 const String kSOSIcon = 'assets/images/sos.svg';
 

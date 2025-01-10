@@ -20,6 +20,27 @@ class AppointmentScheduleController extends GetxController {
   final auth = FirebaseAuth.instance.currentUser;
   AppointmentService _appointmentService = AppointmentService();
   UserController _userController = Get.find<UserController>();
+  List<Vendor>? vendors = [];
+  RxBool isVendorLoaded = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getVendors();
+  }
+
+  void getVendors() async {
+    isLoading.value = true;
+    vendors = await VendorServices().getAllVendors();
+    isLoading.value = false;
+    update();
+  }
+
+  cancelAppointment(Appointment appointment) async {
+    isLoading.value = true;
+    await _appointmentService.cancelTheAppointment(appointment.appointmentId);
+    isLoading.value = false;
+  }
 
   void requestAppointment(
       String deviceToken,

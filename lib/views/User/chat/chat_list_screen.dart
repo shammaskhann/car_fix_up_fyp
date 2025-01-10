@@ -25,26 +25,6 @@ class ChatListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserController userController = Get.find<UserController>();
-    // final Completer<GoogleMapController> _controller =
-    //     Completer<GoogleMapController>();
-
-    // const CameraPosition _kGooglePlex = CameraPosition(
-    //   target: LatLng(37.42796133580664, -122.085749655962),
-    //   zoom: 14.4746,
-    // );
-    // return Scaffold(
-    //   backgroundColor: kWhiteColor,
-    //   body: GoogleMap(
-    //     zoomControlsEnabled: true,
-    //     myLocationEnabled: true,
-    //     myLocationButtonEnabled: true,
-    //     initialCameraPosition: _kGooglePlex,
-    //     mapType: MapType.normal,
-    //     onMapCreated: (controller) => {
-    //       _controller.complete(controller),
-    //     },
-    //   ),
-    // );
 
     return Scaffold(
         backgroundColor: kWhiteColor,
@@ -141,7 +121,7 @@ class ChatListView extends StatelessWidget {
                             return MessengerTile(
                                 uid: user.uid,
                                 name: user.name,
-                                imageUrl: "assets/images/workshop1.png");
+                                imageUrl: "null");
                           },
                         );
                 },
@@ -238,94 +218,109 @@ class MessengerTile extends StatelessWidget {
       );
     }
 
-    return Obx(() => (noLastMessage.value == false)
-        ? InkWell(
-            onTap: () => Get.toNamed(RouteName.chat, arguments: {
-              'uid': uid,
-            }),
-            child: Container(
-              height: 0.1.sh,
-              width: 1.sw,
-              margin:
-                  EdgeInsets.only(top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 0.05.sw,
-                    backgroundColor: kPrimaryColor,
-                    child: ClipOval(
-                      child: Image.asset(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        width: 0.15.sw,
-                        height: 0.15.sw,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.person,
-                            size: 0.1.sw,
-                          );
-                        },
+    return StreamBuilder(
+        stream: chatController.isChatInitiated(uid),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return const Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
+          return snapshot.data == true
+              ? InkWell(
+                  onTap: () => Get.toNamed(RouteName.chat, arguments: {
+                    'uid': uid,
+                  }),
+                  child: Container(
+                    height: 0.1.sh,
+                    width: 1.sw,
+                    margin: EdgeInsets.only(
+                        top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          radius: 0.05.sw,
+                          backgroundColor: kPrimaryColor,
+                          child: (imageUrl == "null")
+                              ? const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                )
+                              : ClipOval(
+                                  child: Image.asset(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: 0.15.sw,
+                                    height: 0.15.sw,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.person,
+                                        size: 0.1.sw,
+                                      );
+                                    },
+                                  ),
+                                ),
+                        ),
+                        title: Text(
+                          name,
+                          style: GoogleFonts.oxanium(
+                            color: kWhiteColor,
+                            fontSize: 0.04.sw,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: StreamBuilder(
+                          stream: chatController.lastMessege(uid),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Text(
+                                '...',
+                                style: TextStyle(color: Colors.white),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            if (snapshot.data == null) {
+                              return const Text('No messages found');
+                            }
+                            return Text(
+                              _getMessage(snapshot),
+                              style: GoogleFonts.oxanium(
+                                color: kWhiteColor,
+                                fontSize: 0.03.sw,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // _buildTimeWidget(snapshot),
+                            // SizedBox(
+                            //   height: 0.01.sh,
+                            // ),
+                            _buildNewMessageCountWidget(uid),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  title: Text(
-                    name,
-                    style: GoogleFonts.oxanium(
-                      color: kWhiteColor,
-                      fontSize: 0.04.sw,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: StreamBuilder(
-                    stream: chatController.lastMessege(uid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text(
-                          '...',
-                          style: TextStyle(color: Colors.white),
-                        );
-                      }
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
-                      if (snapshot.data == null) {
-                        return const Text('No messages found');
-                      }
-                      return Text(
-                        _getMessage(snapshot),
-                        style: GoogleFonts.oxanium(
-                          color: kWhiteColor,
-                          fontSize: 0.03.sw,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    },
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // _buildTimeWidget(snapshot),
-                      // SizedBox(
-                      //   height: 0.01.sh,
-                      // ),
-                      _buildNewMessageCountWidget(uid),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
-        : const SizedBox());
+                )
+              : SizedBox.shrink();
+        });
   }
 }

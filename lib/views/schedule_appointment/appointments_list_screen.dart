@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:car_fix_up/controller/appointment_controller.dart';
@@ -14,14 +16,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppointmentsListScreen extends StatelessWidget {
   const AppointmentsListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    AppointmentScheduleController _appointmentScheduleController =
-        AppointmentScheduleController();
+    AppointmentScheduleController _appointmentScheduleController = Get.put(
+      AppointmentScheduleController(),
+    );
     RxString _selectedStatus = "onHold".obs;
     Widget requestAppointment(
         Appointment appointment,
@@ -77,7 +81,7 @@ class AppointmentsListScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          appointment.userName,
+                          vendor.workshop.name,
                           style: GoogleFonts.oxanium(
                             color: kBlackText,
                             fontSize: 16.sp,
@@ -160,6 +164,119 @@ class AppointmentsListScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              //for Mobile Repair
+              if (appointment.isMobileRepair)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Mobile Repair: ",
+                            style: GoogleFonts.oxanium(
+                              color: kBlackText,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            appointment.isMobileRepair ? "Yes" : "No",
+                            style: GoogleFonts.oxanium(
+                              color: kBlackText,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Location
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: kBlackText,
+                            size: 20.sp,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Completer<GoogleMapController> _controller =
+                                  Completer();
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  content: Container(
+                                    height: 0.5.sh,
+                                    width: 0.8.sw,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: GoogleMap(
+                                      mapType: MapType.normal,
+                                      onMapCreated:
+                                          (GoogleMapController controller) {
+                                        _controller.complete(controller);
+                                      },
+                                      initialCameraPosition: CameraPosition(
+                                        target: LatLng(
+                                            appointment.location?.latitude ?? 0,
+                                            appointment.location?.longitude ??
+                                                0),
+                                        zoom: 15,
+                                      ),
+                                      markers: {
+                                        Marker(
+                                          markerId:
+                                              MarkerId(vendor.workshop.name),
+                                          position: LatLng(
+                                              appointment.location?.latitude ??
+                                                  0,
+                                              appointment.location?.longitude ??
+                                                  0),
+                                          infoWindow: InfoWindow(
+                                            title: vendor.workshop.name,
+                                            snippet:
+                                                "${vendor.workshop.area},${vendor.workshop.city}",
+                                          ),
+                                        ),
+                                      },
+                                      zoomControlsEnabled: false,
+                                      scrollGesturesEnabled: false,
+                                      rotateGesturesEnabled: false,
+                                      tiltGesturesEnabled: false,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(0.01.sw),
+                              decoration: BoxDecoration(
+                                color: kWhiteColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border:
+                                    Border.all(color: kPrimaryColor, width: 2),
+                              ),
+                              child: Text(
+                                "View on Map",
+                                style: GoogleFonts.oxanium(
+                                  color: kPrimaryColor,
+                                  fontSize: 0.03.sw,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               // Waiting for Confirmation Text
               const Spacer(),
               // Accept and Reject Button in a row at bottom stick
@@ -411,8 +528,8 @@ class AppointmentsListScreen extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              // _appointmentScheduleController
-                              //     .confirmAppointment(appointment);
+                              _appointmentScheduleController
+                                  .cancelAppointment(appointment);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kDangerColor,
@@ -494,196 +611,245 @@ class AppointmentsListScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 0.03.sw),
-            child: Container(
-              height: 0.06.sh,
-              width: 1.sw,
-              decoration: BoxDecoration(
-                color: kWhiteColor,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: kBlackText.withOpacity(0.1),
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Obx(() => Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            _selectedStatus.value = "onHold";
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                                color: _selectedStatus.value == "onHold"
-                                    ? kPrimaryColor
-                                    : kWhiteColor,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(8),
-                                    bottomLeft: Radius.circular(8))),
-                            child: Center(
-                                child: Text(
-                              "On Hold",
-                              style: GoogleFonts.oxanium(
-                                  fontSize: 14.sp,
-                                  fontWeight: _selectedStatus.value == "onHold"
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color: _selectedStatus.value == "onHold"
-                                      ? kWhiteColor
-                                      : kBlackText),
-                            )),
-                          ),
-                        ),
-                      )),
-                  Obx(() => Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            _selectedStatus.value = "confirmed";
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                                color: _selectedStatus.value == "confirmed"
-                                    ? kPrimaryColor
-                                    : kWhiteColor,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(0),
-                                    bottomLeft: Radius.circular(0))),
-                            child: Center(
-                                child: Text(
-                              "Confirmed",
-                              style: GoogleFonts.oxanium(
-                                  fontSize: 14.sp,
-                                  fontWeight:
-                                      _selectedStatus.value == "confirmed"
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                  color: _selectedStatus.value == "confirmed"
-                                      ? kWhiteColor
-                                      : kBlackText),
-                            )),
-                          ),
-                        ),
-                      )),
-                  Obx(() => Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            _selectedStatus.value = "completed";
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                                color: _selectedStatus.value == "completed"
-                                    ? kPrimaryColor
-                                    : kWhiteColor,
-                                borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(8),
-                                    bottomRight: Radius.circular(8))),
-                            child: Center(
-                                child: Text(
-                              "Completed",
-                              style: GoogleFonts.oxanium(
-                                  fontSize: 14.sp,
-                                  fontWeight:
-                                      _selectedStatus.value == "completed"
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                  color: _selectedStatus.value == "completed"
-                                      ? kWhiteColor
-                                      : kBlackText),
-                            )),
-                          ),
-                        ),
-                      )),
-                ],
-              ),
-            ),
-          ),
           Expanded(
             child: Obx(
-              () => FutureBuilder<List<Appointment>>(
-                future: _selectedStatus.value == "onHold"
-                    ? _appointmentScheduleController.getUserOnHoldAppointments()
-                    : _selectedStatus.value == "confirmed"
-                        ? _appointmentScheduleController
-                            .getUserConfirmAppointments()
-                        : _appointmentScheduleController
-                            .getUserCompletedAppointments(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text("Error: ${snapshot.error}"),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "No Appointments",
-                        style: GoogleFonts.oxanium(
-                          color: kBlackColor,
-                          fontSize: 0.06.sw,
-                          fontWeight: FontWeight.bold,
+              () => _appointmentScheduleController.isLoading.value == false
+                  ? Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0.03.sw),
+                          child: Container(
+                            height: 0.06.sh,
+                            width: 1.sw,
+                            decoration: BoxDecoration(
+                              color: kWhiteColor,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kBlackText.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Obx(() => Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _selectedStatus.value = "onHold";
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 0,
+                                            horizontal: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: _selectedStatus.value ==
+                                                      "onHold"
+                                                  ? kPrimaryColor
+                                                  : kWhiteColor,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(8),
+                                                      bottomLeft:
+                                                          Radius.circular(8))),
+                                          child: Center(
+                                              child: Text(
+                                            "On Hold",
+                                            style: GoogleFonts.oxanium(
+                                                fontSize: 14.sp,
+                                                fontWeight:
+                                                    _selectedStatus.value ==
+                                                            "onHold"
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                color: _selectedStatus.value ==
+                                                        "onHold"
+                                                    ? kWhiteColor
+                                                    : kBlackText),
+                                          )),
+                                        ),
+                                      ),
+                                    )),
+                                Obx(() => Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _selectedStatus.value = "confirmed";
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 0,
+                                            horizontal: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: _selectedStatus.value ==
+                                                      "confirmed"
+                                                  ? kPrimaryColor
+                                                  : kWhiteColor,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(0),
+                                                      bottomLeft:
+                                                          Radius.circular(0))),
+                                          child: Center(
+                                              child: Text(
+                                            "Confirmed",
+                                            style: GoogleFonts.oxanium(
+                                                fontSize: 14.sp,
+                                                fontWeight:
+                                                    _selectedStatus.value ==
+                                                            "confirmed"
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                color: _selectedStatus.value ==
+                                                        "confirmed"
+                                                    ? kWhiteColor
+                                                    : kBlackText),
+                                          )),
+                                        ),
+                                      ),
+                                    )),
+                                Obx(() => Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          _selectedStatus.value = "completed";
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 0,
+                                            horizontal: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: _selectedStatus.value ==
+                                                      "completed"
+                                                  ? kPrimaryColor
+                                                  : kWhiteColor,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(8),
+                                                      bottomRight:
+                                                          Radius.circular(8))),
+                                          child: Center(
+                                              child: Text(
+                                            "Completed",
+                                            style: GoogleFonts.oxanium(
+                                                fontSize: 14.sp,
+                                                fontWeight:
+                                                    _selectedStatus.value ==
+                                                            "completed"
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                color: _selectedStatus.value ==
+                                                        "completed"
+                                                    ? kWhiteColor
+                                                    : kBlackText),
+                                          )),
+                                        ),
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.only(bottom: 0.1.sh),
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) {
-                      Appointment appointment = snapshot.data![index];
-                      return FutureBuilder<Vendor>(
-                        future: VendorServices()
-                            .getVendorByUid(appointment.vendorUid),
-                        builder: (context, vendorSnapshot) {
-                          if (vendorSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container();
-                          }
-                          if (vendorSnapshot.hasError) {
-                            return Center(
-                              child: Text("Error: ${vendorSnapshot.error}"),
-                            );
-                          }
-                          if (!vendorSnapshot.hasData) {
-                            return const Center(
-                              child: Text("Vendor not found"),
-                            );
-                          }
-                          Vendor vendor = vendorSnapshot.data!;
-                          return requestAppointment(
-                            appointment,
-                            vendor,
-                            _appointmentScheduleController,
-                            _selectedStatus.value == "completed",
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
+                        Expanded(
+                          child: Obx(
+                            () => FutureBuilder<List<Appointment>>(
+                              future: _selectedStatus.value == "onHold"
+                                  ? _appointmentScheduleController
+                                      .getUserOnHoldAppointments()
+                                  : _selectedStatus.value == "confirmed"
+                                      ? _appointmentScheduleController
+                                          .getUserConfirmAppointments()
+                                      : _appointmentScheduleController
+                                          .getUserCompletedAppointments(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text("Error: ${snapshot.error}"),
+                                  );
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      "No Appointments",
+                                      style: GoogleFonts.oxanium(
+                                        color: kBlackColor,
+                                        fontSize: 0.06.sw,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return ListView.builder(
+                                  key: PageStorageKey('appointmentsList'),
+                                  padding: EdgeInsets.only(bottom: 0.1.sh),
+                                  itemCount: snapshot.data?.length,
+                                  itemBuilder: (context, index) {
+                                    Appointment appointment =
+                                        snapshot.data![index];
+                                    Vendor vendor =
+                                        _appointmentScheduleController.vendors!
+                                            .firstWhere((element) =>
+                                                element.uid ==
+                                                appointment.vendorUid);
+                                    return requestAppointment(
+                                      appointment,
+                                      vendor,
+                                      _appointmentScheduleController,
+                                      _selectedStatus.value == "completed",
+                                    );
+                                    // return FutureBuilder<Vendor>(
+                                    //   future: VendorServices()
+                                    //       .getVendorByUid(appointment.vendorUid),
+                                    //   builder: (context, vendorSnapshot) {
+                                    //     if (vendorSnapshot.connectionState ==
+                                    //         ConnectionState.waiting) {
+                                    //       return CircularProgressIndicator();
+                                    //     }
+                                    //     if (vendorSnapshot.hasError) {
+                                    //       return Center(
+                                    //         child: Text("Error: ${vendorSnapshot.error}"),
+                                    //       );
+                                    //     }
+                                    //     if (!vendorSnapshot.hasData) {
+                                    //       return const Center(
+                                    //         child: Text("Vendor not found"),
+                                    //       );
+                                    //     }
+                                    //     Vendor vendor = vendorSnapshot.data!;
+                                    //     return requestAppointment(
+                                    //       appointment,
+                                    //       vendor,
+                                    //       _appointmentScheduleController,
+                                    //       _selectedStatus.value == "completed",
+                                    //     );
+                                    //   },
+                                    // );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: Container(
+                          height: 0.05.sh,
+                          width: 0.1.sw,
+                          child: CircularProgressIndicator())),
             ),
           ),
         ],

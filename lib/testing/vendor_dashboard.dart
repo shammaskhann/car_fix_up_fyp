@@ -1,6 +1,8 @@
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/testing/Vendor/home/Vendor_Home.dart';
 import 'package:car_fix_up/testing/Vendor/towing_location_sender/towing_location_Sender_Screen.dart';
+import 'package:car_fix_up/testing/Vendor/towing_req_Screen.dart/towting_req_screen.dart';
+import 'package:car_fix_up/testing/Vendor/vendorProfile/vendor_profile_Screen.dart';
 import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +38,9 @@ class _VendorDashBoardScreenState extends State<VendorDashBoardScreen> {
             children: const [
               VendorHomeview(),
               ChatListView(),
-              LocationSenderScreen(),
+              TowingReqScreen(),
+              // LocationSenderScreen(),
+              ProfileScreen(),
             ],
           ),
           BottomNavBar(
@@ -92,12 +96,12 @@ class BottomNavBar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildNavItem(
-                      icon: kHomeIcon,
+                      icon: kScheduledIcon,
                       index: 0,
                       currentIndex: currentIndex,
                       pageController: pageController),
                   _buildNavItem(
-                      icon: kScheduledIcon,
+                      icon: kChatIcon,
                       index: 1,
                       currentIndex: currentIndex,
                       pageController: pageController),
@@ -107,7 +111,7 @@ class BottomNavBar extends StatelessWidget {
                       currentIndex: currentIndex,
                       pageController: pageController),
                   _buildNavItem(
-                      icon: kCarRepairIcon,
+                      icon: kProfileIcon,
                       index: 3,
                       currentIndex: currentIndex,
                       pageController: pageController),

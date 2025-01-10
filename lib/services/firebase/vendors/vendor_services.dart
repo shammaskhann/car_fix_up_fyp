@@ -15,7 +15,7 @@ class VendorServices {
           .map((doc) => Vendor.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      print(e);
+      log(e.toString());
       return [];
     }
   }

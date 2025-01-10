@@ -95,7 +95,10 @@ class AppRoutes {
       //testing screen
       GetPage(
         name: RouteName.liveLocScreen,
-        page: (() => const LocationSenderScreen()),
+        page: (() => LocationSenderScreen(
+              requestId: Get.arguments,
+              pickup: Get.arguments,
+            )),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 500),
       ),

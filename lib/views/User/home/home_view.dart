@@ -152,16 +152,18 @@ class HomeView extends StatelessWidget {
                         //   width: 0.03.sw,
                         // ),
                         InkWell(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const TowingScreenServices(
-                                          // userLatLng: <String, double>{
-                                          //   "lat": 24.7732,
-                                          //   "lng": 67.0762,
-                                          // },
-                                          ))),
+                          onTap: () =>
+                              Get.to(() => const TowingScreenServices()),
+                          // onTap: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             const TowingScreenServices(
+                          //                 // userLatLng: <String, double>{
+                          //                 //   "lat": 24.7732,
+                          //                 //   "lng": 67.0762,
+                          //                 // },
+                          //                 ))),
                           child: Container(
                             height: 0.3.sh,
                             width: 0.4.sw,

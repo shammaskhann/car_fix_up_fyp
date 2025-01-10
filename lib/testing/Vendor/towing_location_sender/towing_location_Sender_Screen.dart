@@ -1,13 +1,22 @@
 import 'dart:async';
 
+import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/firebase/towing_rides/towing_ride_servie.dart';
+import 'package:car_fix_up/shared/button.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:developer';
 
 class LocationSenderScreen extends StatefulWidget {
-  const LocationSenderScreen({super.key});
+  final String requestId;
+  final GeoPoint pickup;
+  const LocationSenderScreen(
+      {required this.requestId, required this.pickup, super.key});
   @override
   _LocationSenderScreenState createState() => _LocationSenderScreenState();
 }
@@ -16,10 +25,12 @@ class _LocationSenderScreenState extends State<LocationSenderScreen> {
   late Location location;
   late LocationData currentLocation;
   late Stream<LocationData> locationStream;
+  bool isCloseToLocation = false;
   final mapController = Completer<GoogleMapController>();
   @override
   void initState() {
     super.initState();
+    log('Request ID: ${widget.requestId}');
     location = new Location();
     startLocationStream();
   }
@@ -48,12 +59,11 @@ class _LocationSenderScreenState extends State<LocationSenderScreen> {
     locationStream.listen((LocationData currentLocation) {
       log('Location: ${currentLocation.latitude}, ${currentLocation.longitude}');
       FirebaseFirestore.instance
-          .collection('towing_rides')
+          .collection('towing_requests')
           .doc(
-              'cKD8bJ50Q8W4JMNz_i-U1r:APA91bHYg9qGa3X-8U3EXI0kUk-kyD0nurWHYtUwYtCZoIt_pKZz3Z8qfqsXB8aizackMQ7IsrUZRDi4Y1z5-n7es2FNO85UrlacBgQ03lazhRldqXgGyPfQYBKZRlJUn5qLrhmIK0JO')
-          .set({
-        'pickup': GeoPoint(30.3308401, 71.247499),
-        'pickup_name': 'Your Pickup Name',
+            widget.requestId,
+          )
+          .update({
         'active_location':
             GeoPoint(currentLocation.latitude!, currentLocation.longitude!)
       });
@@ -67,19 +77,61 @@ class _LocationSenderScreenState extends State<LocationSenderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(30.3308401, 71.247499),
-          zoom: 14.4746,
+      appBar: AppBar(
+        backgroundColor: kBlackColor,
+        title: Text(
+          'Towing Ride',
+          style: GoogleFonts.oxanium(color: kWhiteColor),
         ),
-        onMapCreated: (GoogleMapController controller) {
-          mapController.complete(controller);
-        },
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-        mapType: MapType.normal,
-        compassEnabled: true,
-        zoomControlsEnabled: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: kWhiteColor),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(30.3308401, 71.247499),
+              zoom: 14.4746,
+            ),
+            onMapCreated: (GoogleMapController controller) {
+              mapController.complete(controller);
+            },
+            myLocationEnabled: true,
+            markers: {
+              Marker(
+                markerId: const MarkerId('pickup'),
+                position:
+                    LatLng(widget.pickup.latitude, widget.pickup.longitude),
+                infoWindow: const InfoWindow(title: 'Pickup Location'),
+                icon: BitmapDescriptor.defaultMarker,
+              ),
+            },
+            myLocationButtonEnabled: true,
+            mapType: MapType.normal,
+            compassEnabled: true,
+            zoomControlsEnabled: true,
+          ),
+          Positioned(
+              bottom: 0.05.sh,
+              right: 0.0,
+              left: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
+                child: CustomButton(
+                    borderRadius: 15,
+                    text: "Mark As Completed",
+                    onPressed: () {
+                      TowingRideService()
+                          .changeTowingStatusToCompleted(widget.requestId);
+                      Get.back();
+                    },
+                    textColor: kWhiteText,
+                    buttonColor: kPrimaryColor),
+              ))
+        ],
       ),
     );
   }

@@ -75,6 +75,7 @@ class WorkshopTile extends StatelessWidget {
                   ],
                 ),
               ),
+              Spacer(),
               //Rating
               Padding(
                 padding: EdgeInsets.only(left: 0.1.sw),
@@ -83,7 +84,9 @@ class WorkshopTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      avgRating(vendor).toStringAsFixed(2),
+                      vendor.workshopReviews.length > 1
+                          ? avgRating(vendor).toStringAsFixed(2)
+                          : "0.0",
                       style: GoogleFonts.oxanium(
                         color: kBlackColor,
                         fontSize: 0.04.sw,

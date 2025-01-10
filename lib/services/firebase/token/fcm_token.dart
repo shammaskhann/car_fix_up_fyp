@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:car_fix_up/controller/user_controller.dart';
+import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,9 +30,16 @@ class fcmToken {
 
   Future<void> saveNewTokenInDb(String token) async {
     final user = auth.currentUser;
-    await _db.collection('users').doc(user!.uid).update({
-      'deviceToken': token,
-    });
+    final UserType userType = userController.userType;
+    if (userType == UserType.user) {
+      await _db.collection('users').doc(user!.uid).update({
+        'deviceToken': token,
+      });
+    } else {
+      await _db.collection('vendors').doc(user!.uid).update({
+        'deviceToken': token,
+      });
+    }
     LocalStorageService().saveDeviceToken(token);
     userController.deviceToken = token;
   }

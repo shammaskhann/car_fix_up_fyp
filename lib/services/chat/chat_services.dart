@@ -99,4 +99,13 @@ class ChatServices {
         .where('isRead', isEqualTo: false)
         .snapshots();
   }
+
+  Stream<bool> isChatInitiated(String chatId) {
+    //check is there any message in chat
+    return chatCollection
+        .doc(chatId)
+        .collection('messages')
+        .snapshots()
+        .map((event) => event.docs.isNotEmpty);
+  }
 }

@@ -132,7 +132,7 @@ class DashboardView extends GetView<DashboardController> {
                           onTap: () {
                             dashboardController.currentIndex.value = 0;
                             _pageController.jumpToPage(0);
-                            Navigator.pop(context);
+                            Get.back();
                           },
                         ),
                         ListTile(
@@ -150,7 +150,7 @@ class DashboardView extends GetView<DashboardController> {
                           onTap: () {
                             dashboardController.currentIndex.value = 1;
                             _pageController.jumpToPage(1);
-                            Navigator.pop(context);
+                            Get.back();
                           },
                         ),
                         ListTile(
@@ -168,7 +168,7 @@ class DashboardView extends GetView<DashboardController> {
                           onTap: () {
                             dashboardController.currentIndex.value = 2;
                             _pageController.jumpToPage(2);
-                            Navigator.pop(context);
+                            Get.back();
                           },
                         ),
                         ListTile(
@@ -186,7 +186,7 @@ class DashboardView extends GetView<DashboardController> {
                           onTap: () {
                             dashboardController.currentIndex.value = 3;
                             _pageController.jumpToPage(3);
-                            Navigator.pop(context);
+                            Get.back();
                           },
                         ),
                         const Spacer(),
@@ -205,7 +205,7 @@ class DashboardView extends GetView<DashboardController> {
                           onTap: () async {
                             LocalStorageService().clearAll();
                             await FirebaseAuth.instance.signOut();
-                            Get.offAllNamed(RouteName.login);
+                            Get.offAllNamed(RouteName.onboarding);
                           },
                         ),
                       ],

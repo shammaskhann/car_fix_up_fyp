@@ -156,4 +156,10 @@ class ChatController {
       );
     }
   }
+
+  Stream<bool> isChatInitiated(String senderUid) {
+    final user = auth.currentUser;
+    String chatDocumentId = '${user!.uid}_${senderUid}';
+    return _chatServices.isChatInitiated(chatDocumentId);
+  }
 }
