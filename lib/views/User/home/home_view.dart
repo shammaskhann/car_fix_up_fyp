@@ -5,6 +5,7 @@ import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
 import 'package:car_fix_up/views/User/home/screen/towing_service/towing_service_screen.dart';
+import 'package:car_fix_up/views/User/profile/customer_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,7 +52,9 @@ class HomeView extends StatelessWidget {
                           ),
                           IconButton(
                             icon: const Icon(Icons.person),
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => const CustomerProfileScreen());
+                            },
                             color: Colors.white,
                           ),
                         ],

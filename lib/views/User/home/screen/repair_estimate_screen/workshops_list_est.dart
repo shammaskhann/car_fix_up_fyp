@@ -29,51 +29,67 @@ class WorkshopsListEstScreem extends StatelessWidget {
           )),
       body: Padding(
         padding: const EdgeInsets.only(top: 15.0, bottom: 10),
-        child: FutureBuilder<List<Vendor>>(
-            future: vendorServices.getAllVendors(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: kPrimaryColor,
-                ));
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text("Error: ${snapshot.error}"),
-                );
-              }
-              if (snapshot.data == null) {
-                return Center(
-                  child: Text(
-                    "No Workshop Found",
-                    style: GoogleFonts.oxanium(
-                      color: kPrimaryColor,
-                      fontSize: 0.06.sw,
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<Vendor>>(
+                future: vendorServices.getAllVendors(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: kPrimaryColor,
+                      ),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text("Error: ${snapshot.error}"),
+                    );
+                  }
+                  if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No Workshop Found",
+                        style: GoogleFonts.oxanium(
+                          color: kPrimaryColor,
+                          fontSize: 0.06.sw,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    List<Vendor>? vendors = snapshot.data;
+                    return ListView.builder(
+                      itemCount: vendors!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: WorkshopTile(
+                            vendor: vendors[index],
+                            onTap: () => Get.toNamed(RouteName.repairEstimate,
+                                arguments: vendors[index]),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  return Center(
+                    child: Text(
+                      "Server Error",
+                      style: GoogleFonts.oxanium(
+                        color: kPrimaryColor,
+                        fontSize: 0.06.sw,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                );
-              }
-              if (snapshot.hasData) {
-                List<Vendor>? vendors = snapshot.data;
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: vendors!.length,
-                    itemBuilder: (context, index) {
-                      return WorkshopTile(
-                          vendor: vendors[index],
-                          onTap: () => Get.toNamed(RouteName.repairEstimate,
-                              arguments: vendors[index]));
-                    },
-                  ),
-                );
-              }
-              return Center(
-                child: Text(
-                    (snapshot.data == null) ? "No Workshop" : "Server Error"),
-              );
-            }),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

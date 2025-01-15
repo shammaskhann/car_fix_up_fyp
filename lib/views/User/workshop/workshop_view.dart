@@ -1,7 +1,7 @@
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/model/Vendor/vendor.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
-import 'package:car_fix_up/views/User/home/home_view.dart';
+import 'package:car_fix_up/views/User/profile/customer_profile.dart';
 import 'package:car_fix_up/views/User/workshop/controller/workshop_controller.dart';
 import 'package:car_fix_up/views/components/vendor_profile.dart';
 import 'package:car_fix_up/views/widgets/workshop_tile.dart';
@@ -47,7 +47,9 @@ class WorkshopView extends StatelessWidget {
                           ),
                           IconButton(
                             icon: const Icon(Icons.person),
-                            onPressed: () {},
+                            onPressed: () {
+                              Get.to(() => const CustomerProfileScreen());
+                            },
                             color: Colors.white,
                           ),
                         ],

@@ -10,7 +10,7 @@ import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/chat/chat_services.dart';
 import 'package:car_fix_up/services/firebase/user/user_services.dart';
 import 'package:car_fix_up/services/firebase/vendors/vendor_services.dart';
-import 'package:car_fix_up/views/User/home/home_view.dart';
+import 'package:car_fix_up/views/User/profile/customer_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,7 +57,9 @@ class ChatListView extends StatelessWidget {
                             ),
                             IconButton(
                               icon: const Icon(Icons.person),
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(() => const CustomerProfileScreen());
+                              },
                               color: Colors.white,
                             ),
                           ],

@@ -75,31 +75,28 @@ class WorkshopTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               //Rating
-              Padding(
-                padding: EdgeInsets.only(left: 0.1.sw),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      vendor.workshopReviews.length > 1
-                          ? avgRating(vendor).toStringAsFixed(2)
-                          : "0.0",
-                      style: GoogleFonts.oxanium(
-                        color: kBlackColor,
-                        fontSize: 0.04.sw,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    vendor.workshopReviews.length > 1
+                        ? avgRating(vendor).toStringAsFixed(2)
+                        : "0.0",
+                    style: GoogleFonts.oxanium(
+                      color: kBlackColor,
+                      fontSize: 0.04.sw,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Icon(
-                      Icons.star,
-                      color: kPrimaryColor,
-                      size: 0.05.sw,
-                    )
-                  ],
-                ),
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: kPrimaryColor,
+                    size: 0.05.sw,
+                  )
+                ],
               ),
             ],
           ),

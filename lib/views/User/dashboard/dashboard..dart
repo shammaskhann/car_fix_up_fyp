@@ -8,6 +8,7 @@ import 'package:car_fix_up/services/local-storage/localStorage.dart';
 import 'package:car_fix_up/views/User/chat/chat_list_screen.dart';
 import 'package:car_fix_up/views/User/dashboard/controller/dashboard_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
+import 'package:car_fix_up/views/User/profile/customer_profile.dart';
 import 'package:car_fix_up/views/User/workshop/workshop_view.dart';
 import 'package:car_fix_up/views/schedule_appointment/appointments_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -184,9 +185,7 @@ class DashboardView extends GetView<DashboardController> {
                                 fontWeight: FontWeight.bold),
                           ),
                           onTap: () {
-                            dashboardController.currentIndex.value = 3;
-                            _pageController.jumpToPage(3);
-                            Get.back();
+                            Get.to(() => const CustomerProfileScreen());
                           },
                         ),
                         const Spacer(),

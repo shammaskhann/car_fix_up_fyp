@@ -334,8 +334,7 @@ class ChatMessageWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
+                  Flexible(
                     child: Text(
                       message,
                       style: GoogleFonts.oxanium(

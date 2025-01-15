@@ -13,22 +13,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: kBlackColor,
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back_ios, color: kWhiteColor),
-      //     onPressed: () {
-      //       Get.back();
-      //     },
-      //   ),
-      //   title: Text(
-      //     'Profile',
-      //     style: GoogleFonts.oxanium(
-      //       color: kWhiteColor,
-      //       fontSize: 20.sp,
-      //     ),
-      //   ),
-      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -61,12 +45,12 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildButton("Edit Workshop Details", () {}),
-                  _buildButton("Edit Repair Estimates", () {}),
+                  // _buildButton("Edit Workshop Details", () {}),
+                  // _buildButton("Edit Repair Estimates", () {}),
                   _buildButton("Logout", () async {
                     LocalStorageService().clearAll();
                     await FirebaseAuth.instance.signOut();
-                    Get.offAllNamed(RouteName.login);
+                    Get.offAllNamed(RouteName.onboarding);
                   }),
                 ],
               ),
