@@ -200,11 +200,15 @@ class _ChatViewState extends State<ChatView> {
                               fontWeight: FontWeight.bold,
                               color: kWhiteColor),
                           controller: _messageController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Type a message',
-                            hintStyle: TextStyle(
-                              fontFamily: 'Mont',
+                            // hintStyle: TextStyle(
+                            //   fontFamily: 'Mont',
+                            //   color: Colors.grey,
+                            // ),
+                            hintStyle: GoogleFonts.oxanium(
+                              fontWeight: FontWeight.bold,
                               color: Colors.grey,
                             ),
                           ),

@@ -23,7 +23,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserData();
-    //initZegoCallInvitationService();
+    initZegoCallInvitationService();
   }
 
   void fetchUserData() async {
@@ -58,30 +58,30 @@ class HomeController extends GetxController {
     fcmToken().checkForRefreshToken(userData['deviceToken']);
   }
 
-  // void initZegoCallInvitationService() {
-  //   try {
-  //     ZegoUIKitPrebuiltCallInvitationService().init(
-  //         appID: kAppID /*input your AppID*/,
-  //         appSign: kAppSign /*input your AppSign*/,
-  //         userID: "102",
-  //         userName: user!.email!,
-  //         plugins: [ZegoUIKitSignalingPlugin()],
-  //         notificationConfig: ZegoCallInvitationNotificationConfig(
-  //           androidNotificationConfig: ZegoCallAndroidNotificationConfig(
-  //             showFullScreen: true,
-  //           ),
-  //         ),
-  //         invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
-  //             onIncomingCallDeclineButtonPressed: () {
-  //           ///  Add your custom logic here.
-  //         }, onIncomingCallAcceptButtonPressed: () {
-  //           ///  Add your custom logic here.
-  //           Get.toNamed(RouteName.videoCall, arguments: "sos_call");
-  //         }));
-  //   } catch (e) {
-  //     Utils.getErrorSnackBar('Error in initializing Zego Call Service $e');
-  //   }
-  // }
+  void initZegoCallInvitationService() {
+    try {
+      ZegoUIKitPrebuiltCallInvitationService().init(
+          appID: kAppID /*input your AppID*/,
+          appSign: kAppSign /*input your AppSign*/,
+          userID: user!.uid,
+          userName: user!.email!,
+          plugins: [ZegoUIKitSignalingPlugin()],
+          notificationConfig: ZegoCallInvitationNotificationConfig(
+            androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+              showFullScreen: true,
+            ),
+          ),
+          invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
+              onIncomingCallDeclineButtonPressed: () {
+            ///  Add your custom logic here.
+          }, onIncomingCallAcceptButtonPressed: () {
+            ///  Add your custom logic here.
+            Get.toNamed(RouteName.videoCall, arguments: "sos_call");
+          }));
+    } catch (e) {
+      Utils.getErrorSnackBar('Error in initializing Zego Call Service $e');
+    }
+  }
 
   // void sendCallInvitation(
   //     {required String callID,

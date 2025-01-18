@@ -47,7 +47,7 @@ class AppointmentsListScreen extends StatelessWidget {
             vertical: 0.02.sh,
             horizontal: 0.02.sw,
           ),
-          height: 0.2.sh,
+          height: 0.22.sh,
           width: 1.sw,
           decoration: BoxDecoration(
             color: kWhiteColor,
@@ -774,7 +774,9 @@ class AppointmentsListScreen extends StatelessWidget {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      color: kPrimaryColor,
+                                    ),
                                   );
                                 }
                                 if (snapshot.hasError) {

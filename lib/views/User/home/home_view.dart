@@ -256,8 +256,19 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () => Get.toNamed(RouteName.videoCall,
-                                arguments: "sos_call"),
+                            onTap: () {
+                              PushNotification.sendNotification(
+                                  "ezN9NqhgRcaYEMXG0b9DMO:APA91bFy5b4zF60HRFqDh_MmHu3Lq7JUYbMnZ5RkKeVkrA7quP_9wH-8d5RrKMn8Dhho2aJgJ7RKY-1zJ4si11nVO2krfaYg3OmR8nZFO8p7PK3R2fCgdyQ",
+                                  "Live Dignostic Call Incoming",
+                                  "A Customer is seeking a Live Dignostic on Video Call",
+                                  {
+                                    "notification_type": "CALL_NOTIFICATION",
+                                    "callID": "sos_call",
+                                    "userID": "101",
+                                  });
+                              Get.toNamed(RouteName.videoCall,
+                                  arguments: "sos_call");
+                            },
                             child: Container(
                               height: 0.3.sh,
                               width: 0.4.sw,

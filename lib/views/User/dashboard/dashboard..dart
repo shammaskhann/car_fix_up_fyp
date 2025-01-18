@@ -46,7 +46,9 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                       contentTextStyle: GoogleFonts.oxanium(
                           color: kBlackColor, fontSize: 16.sp),
-                      content: const Text('Do you want to exit an App'),
+                      content: Text('Do you want to exit an App',
+                          style: GoogleFonts.oxanium(
+                              color: kBlackColor, fontSize: 16.sp)),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -203,6 +205,7 @@ class DashboardView extends GetView<DashboardController> {
                           ),
                           onTap: () async {
                             LocalStorageService().clearAll();
+                            ZegoUIKitPrebuiltCallInvitationService().uninit();
                             await FirebaseAuth.instance.signOut();
                             Get.offAllNamed(RouteName.onboarding);
                           },

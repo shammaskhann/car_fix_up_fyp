@@ -13,7 +13,7 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 // final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -21,13 +21,13 @@ void main() async {
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
-  // call the useSystemCallingUI
-  // ZegoUIKit().initLog().then((value) {
-  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-  //     [ZegoUIKitSignalingPlugin()],
-  //   );
-  // });
+  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+  //call the useSystemCallingUI
+  ZegoUIKit().initLog().then((value) {
+    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+      [ZegoUIKitSignalingPlugin()],
+    );
+  });
 
   PushNotification().initializeLocalNotifications();
 
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
             notification.title!, notification.body!, message.data);
       }
     });
-    
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       log("===Incoming message===");
@@ -83,6 +83,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       child: GetMaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         getPages: AppRoutes.appRoute(),
       ),

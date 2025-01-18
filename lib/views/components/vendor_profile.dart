@@ -94,7 +94,6 @@ class VendorProfile extends StatelessWidget {
                   EdgeInsets.only(top: 0.01.sh, right: 0.03.sw, left: 0.03.sw),
               child: Container(
                 padding: EdgeInsets.all(0.02.sw),
-                height: 0.3.sh,
                 width: 1.sw,
                 decoration: BoxDecoration(
                   color: kWhiteColor,
@@ -126,6 +125,8 @@ class VendorProfile extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     vendor.workshop.name,
@@ -134,10 +135,12 @@ class VendorProfile extends StatelessWidget {
                                       fontSize: 0.05.sw,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(
-                                    width: 0.02.sw,
-                                  ),
+                                  // SizedBox(
+                                  //   width: 0.02.sw,
+                                  // ),
                                   InkWell(
                                     onTap: () =>
                                         Get.toNamed(RouteName.chat, arguments: {
@@ -176,85 +179,78 @@ class VendorProfile extends StatelessWidget {
                                   SizedBox(
                                     width: 0.1.sw,
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      Completer<GoogleMapController>
-                                          _controller = Completer();
-                                      log("===${vendor.workshop.loc?.lat}===");
-                                      log("===${vendor.workshop.loc?.lng}===");
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          content: Container(
-                                            height: 0.5.sh,
-                                            width: 0.8.sw,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: GoogleMap(
-                                              mapType: MapType.normal,
-                                              onMapCreated: (GoogleMapController
-                                                  controller) {
-                                                _controller
-                                                    .complete(controller);
-                                              },
-                                              initialCameraPosition:
-                                                  CameraPosition(
-                                                target: LatLng(
-                                                    vendor.workshop.loc?.lat ??
-                                                        0,
-                                                    vendor.workshop.loc?.lng ??
-                                                        0),
-                                                zoom: 15,
-                                              ),
-                                              markers: {
-                                                Marker(
-                                                  markerId: MarkerId(
-                                                      vendor.workshop.name),
-                                                  position: LatLng(
-                                                      vendor.workshop.loc
-                                                              ?.lat ??
-                                                          0,
-                                                      vendor.workshop.loc
-                                                              ?.lng ??
-                                                          0),
-                                                  infoWindow: InfoWindow(
-                                                    title: vendor.workshop.name,
-                                                    snippet:
-                                                        "${vendor.workshop.area},${vendor.workshop.city}",
-                                                  ),
-                                                ),
-                                              },
-                                              zoomControlsEnabled: false,
-                                              scrollGesturesEnabled: false,
-                                              rotateGesturesEnabled: false,
-                                              tiltGesturesEnabled: false,
-                                            ),
-                                          ),
+                                ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Completer<GoogleMapController> _controller =
+                                      Completer();
+                                  log("===${vendor.workshop.loc?.lat}===");
+                                  log("===${vendor.workshop.loc?.lng}===");
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      content: Container(
+                                        height: 0.5.sh,
+                                        width: 0.8.sw,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(0.01.sw),
-                                      decoration: BoxDecoration(
-                                        color: kWhiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: kPrimaryColor, width: 2),
-                                      ),
-                                      child: Text(
-                                        "View on Map",
-                                        style: GoogleFonts.oxanium(
-                                          color: kPrimaryColor,
-                                          fontSize: 0.03.sw,
-                                          fontWeight: FontWeight.bold,
+                                        child: GoogleMap(
+                                          mapType: MapType.normal,
+                                          onMapCreated:
+                                              (GoogleMapController controller) {
+                                            _controller.complete(controller);
+                                          },
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(
+                                                vendor.workshop.loc?.lat ?? 0,
+                                                vendor.workshop.loc?.lng ?? 0),
+                                            zoom: 15,
+                                          ),
+                                          markers: {
+                                            Marker(
+                                              markerId: MarkerId(
+                                                  vendor.workshop.name),
+                                              position: LatLng(
+                                                  vendor.workshop.loc?.lat ?? 0,
+                                                  vendor.workshop.loc?.lng ??
+                                                      0),
+                                              infoWindow: InfoWindow(
+                                                title: vendor.workshop.name,
+                                                snippet:
+                                                    "${vendor.workshop.area},${vendor.workshop.city}",
+                                              ),
+                                            ),
+                                          },
+                                          zoomControlsEnabled: false,
+                                          scrollGesturesEnabled: false,
+                                          rotateGesturesEnabled: false,
+                                          tiltGesturesEnabled: false,
                                         ),
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(0.01.sw),
+                                  decoration: BoxDecoration(
+                                    color: kWhiteColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: kPrimaryColor, width: 2),
+                                  ),
+                                  child: Text(
+                                    "View on Map",
+                                    style: GoogleFonts.oxanium(
+                                      color: kPrimaryColor,
+                                      fontSize: 0.025.sw,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ],
@@ -265,6 +261,8 @@ class VendorProfile extends StatelessWidget {
                       padding: EdgeInsets.only(top: 0.03.sh, left: 0.02.sw),
                       child: Text(
                         vendor.workshop.desc,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 5,
                         style: GoogleFonts.oxanium(
                           color: kBlackColor,
                           fontSize: 0.04.sw,

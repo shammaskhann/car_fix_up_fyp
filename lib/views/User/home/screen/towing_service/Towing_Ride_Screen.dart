@@ -191,6 +191,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
@@ -428,8 +429,13 @@ class _TowingRideScreenState extends State<TowingRideScreen> {
                       padding: EdgeInsets.only(top: 0.02.sh),
                       child: Text(
                         "Towing Services",
-                        style: TextStyle(
-                          color: Colors.white,
+                        // style: TextStyle(
+                        //   color: Colors.white,
+                        //   fontSize: 20.sp,
+                        //   fontWeight: FontWeight.bold,
+                        // ),
+                        style: GoogleFonts.oxanium(
+                          color: kWhiteColor,
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class CustomerProfileScreen extends StatelessWidget {
   const CustomerProfileScreen({super.key});
@@ -69,6 +70,7 @@ class CustomerProfileScreen extends StatelessWidget {
                         _buildProfileDetail("User Type", userInfo['userType']),
                         const SizedBox(height: 20),
                         _buildButton("Logout", () async {
+                          ZegoUIKitPrebuiltCallInvitationService().uninit();
                           await LocalStorageService().clearAll();
                           await FirebaseAuth.instance.signOut();
                           Get.offAllNamed(RouteName.onboarding);

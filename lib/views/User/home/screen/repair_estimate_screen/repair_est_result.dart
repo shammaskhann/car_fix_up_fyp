@@ -3,6 +3,7 @@ import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/firebase/vendors/vendor_services.dart';
 import 'package:car_fix_up/shared/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -97,14 +98,14 @@ class RepairEstResultScreen extends StatelessWidget {
             const SizedBox(height: 10),
             const Divider(color: kPrimaryColor, thickness: 2),
             Text(
-              'Total Minimum Cost: Rs ${totalCost[0]} (Hatchback & Sedan)',
+              'Total Minimum Cost: Rs ${totalCost[0]} \n(Hatchback & Sedan)',
               style: GoogleFonts.oxanium(
-                  fontWeight: FontWeight.bold, fontSize: 16),
+                  fontWeight: FontWeight.bold, fontSize: 13.sp),
             ),
             Text(
-              'Total Maximum Cost: Rs ${totalCost[1]} (4x4 & SUV & Luxury)',
+              'Total Maximum Cost: Rs ${totalCost[1]} \n(4x4 & SUV & Luxury)',
               style: GoogleFonts.oxanium(
-                  fontWeight: FontWeight.bold, fontSize: 16),
+                  fontWeight: FontWeight.bold, fontSize: 13.sp),
             ),
             const SizedBox(height: 20),
             Obx(() => CustomButton(

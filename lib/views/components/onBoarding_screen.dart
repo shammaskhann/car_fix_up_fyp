@@ -374,19 +374,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Text(
                             contents[i].title,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Mulish",
-                              fontWeight: FontWeight.w600,
+                            // style: TextStyle(
+                            //   fontFamily: "Mulish",
+                            //   fontWeight: FontWeight.w600,
+                            //   fontSize: (width <= 550) ? 30.sp : 35.sp,
+                            // ),
+                            style: GoogleFonts.oxanium(
+                              // color: kPrimaryColor,
                               fontSize: (width <= 550) ? 30.sp : 35.sp,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 15),
                           Text(
                             contents[i].desc,
-                            style: TextStyle(
-                              fontFamily: "Mulish",
-                              fontWeight: FontWeight.w300,
+                            // style: TextStyle(
+                            //   fontFamily: "Mulish",
+                            //   fontWeight: FontWeight.w300,
+                            //   fontSize: (width <= 550) ? 17.sp : 25.sp,
+                            // ),
+                            style: GoogleFonts.oxanium(
+                              // color: kPrimaryColor,
                               fontSize: (width <= 550) ? 17.sp : 25.sp,
+                              fontWeight: FontWeight.w300,
                             ),
                             textAlign: TextAlign.center,
                           )
@@ -413,12 +423,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     padding: const EdgeInsets.all(30),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           "Are You?",
-                          style: TextStyle(
-                            fontFamily: "Mulish",
+                          // style: TextStyle(
+                          //   fontFamily: "Mulish",
+                          //   fontWeight: FontWeight.w600,
+                          //   fontSize: 20,
+                          // ),
+                          style: GoogleFonts.oxanium(
+                            // color: kPrimaryColor,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.w600,
-                            fontSize: 20,
                           ),
                         ),
                         const SizedBox(height: 20),

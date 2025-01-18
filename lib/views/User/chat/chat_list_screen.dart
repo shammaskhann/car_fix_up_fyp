@@ -90,7 +90,9 @@ class ChatListView extends StatelessWidget {
                   log('User Type: ${userController.userType}');
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: kPrimaryColor,
+                      ),
                     );
                   }
                   if (snapshot.hasError) {
@@ -186,7 +188,11 @@ class MessengerTile extends StatelessWidget {
       }
       return Text(
         displayTime,
-        style: const TextStyle(
+        // style: const TextStyle(
+        //   color: Colors.grey,
+        //   fontSize: 12,
+        // ),
+        style: GoogleFonts.oxanium(
           color: Colors.grey,
           fontSize: 12,
         ),
@@ -209,7 +215,12 @@ class MessengerTile extends StatelessWidget {
             backgroundColor: kPrimaryColor,
             child: Text(
               count.toString(),
-              style: const TextStyle(
+              // style: const TextStyle(
+              //   color: kWhiteColor,
+              //   fontSize: 12,
+              //   fontWeight: FontWeight.bold,
+              // ),
+              style: GoogleFonts.oxanium(
                 color: kWhiteColor,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -225,7 +236,9 @@ class MessengerTile extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           // if (snapshot.connectionState == ConnectionState.waiting) {
           //   return const Center(
-          //     child: CircularProgressIndicator(),
+          //     child: CircularProgressIndicator(
+          //  color: kPrimaryColor,
+          //),
           //   );
           // }
           return snapshot.data == true

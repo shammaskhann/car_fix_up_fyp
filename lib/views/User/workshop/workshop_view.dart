@@ -64,6 +64,7 @@ class WorkshopView extends StatelessWidget {
                           fontSize: 0.06.sw,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],

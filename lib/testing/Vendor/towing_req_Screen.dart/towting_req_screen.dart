@@ -99,7 +99,9 @@ class _TowingReqScreenState extends State<TowingReqScreen> {
                 log('Data: ${snapshot.data}');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: kPrimaryColor,
+                    ),
                   );
                 }
                 if (snapshot.hasError) {

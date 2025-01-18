@@ -1,11 +1,14 @@
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
+import 'package:car_fix_up/testing/Vendor/edit_repair_est_screen.dart/edit_repair_est_Screen.dart';
+import 'package:car_fix_up/testing/Vendor/edit_workshop_detail_screen.dart/edit_workshop_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -45,10 +48,15 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // _buildButton("Edit Workshop Details", () {}),
-                  // _buildButton("Edit Repair Estimates", () {}),
+                  _buildButton("Edit Workshop Details", () {
+                    Get.to(() => const EditWorkshopDetailScreen());
+                  }),
+                  _buildButton("Edit Repair Estimates", () {
+                    Get.to(() => const EditRepairEstScreen());
+                  }),
                   _buildButton("Logout", () async {
                     LocalStorageService().clearAll();
+                    ZegoUIKitPrebuiltCallInvitationService().uninit();
                     await FirebaseAuth.instance.signOut();
                     Get.offAllNamed(RouteName.onboarding);
                   }),

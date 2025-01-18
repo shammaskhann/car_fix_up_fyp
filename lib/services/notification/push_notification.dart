@@ -157,33 +157,38 @@ class PushNotification {
 
   static sendNotification(String deviceToken, String title, String body,
       Map<String, String> data) async {
-    final String servrKey = await getAccessToken();
-    log('Server key: $servrKey');
-    String enPointFirebaseCloudMessage =
-        'https://fcm.googleapis.com/v1/projects/car-fix-up/messages:send';
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $servrKey',
-    };
-    log("Server key: $servrKey");
+    try {
+      log('Sending notification to $deviceToken');
+      final String servrKey = await getAccessToken();
+      log('Server key: $servrKey');
+      String enPointFirebaseCloudMessage =
+          'https://fcm.googleapis.com/v1/projects/car-fix-up/messages:send';
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $servrKey',
+      };
+      log("Server key: $servrKey");
 
-    final Map<String, dynamic> payload = {
-      "message": {
-        "token": deviceToken,
-        "notification": {"title": title, "body": body},
-        "data": data
+      final Map<String, dynamic> payload = {
+        "message": {
+          "token": deviceToken,
+          "notification": {"title": title, "body": body},
+          "data": data
+        }
+      };
+      final response = await http.post(
+        Uri.parse(enPointFirebaseCloudMessage),
+        headers: headers,
+        body: json.encode(payload),
+      );
+      log(response.body);
+      if (response.statusCode == 200) {
+        log('Notification sent');
+      } else {
+        log('Notification not sent');
       }
-    };
-    final response = await http.post(
-      Uri.parse(enPointFirebaseCloudMessage),
-      headers: headers,
-      body: json.encode(payload),
-    );
-    log(response.body);
-    if (response.statusCode == 200) {
-      log('Notification sent');
-    } else {
-      log('Notification not sent');
+    } catch (e) {
+      log('Error sending notification: $e');
     }
   }
 }
