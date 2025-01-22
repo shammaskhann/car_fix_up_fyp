@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AuthServices {
   final auth = FirebaseAuth.instance;
@@ -17,6 +18,66 @@ class AuthServices {
   Future<bool> Login(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      AuthException.authExceptionToast(e.code);
+      return false;
+    }
+  }
+
+  Future<bool> vendorSignUp(
+      String email,
+      String name,
+      String password,
+      String phone,
+      String workshopName,
+      String workshopDesc,
+      String workshopArea,
+      String workshopCity,
+      String operationalTime,
+      LatLng loc,
+      String closeTime,
+      List<Map<String, dynamic>> repairEstimates) async {
+    try {
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
+      log('Device Token: $deviceToken'); // This is the device token that will be used to send notifications to the user (if needed
+      log('User UID: ${userCredential.user!.uid}');
+      log('User Email: $email');
+      log('User Password: $password');
+      log('User Phone: $phone');
+      log('User Name: $name');
+      log('Workshop Name: $workshopName');
+      log('Workshop Description: $workshopDesc');
+      log('Workshop Area: $workshopArea');
+      log('Workshop City: $workshopCity');
+      log('Operational Time: $operationalTime');
+      log('Close Time: $closeTime');
+
+      await _db.collection('vendors').doc(userCredential.user!.uid).set({
+        'name': name,
+        'email': email,
+        'password': password,
+        'phone': phone,
+        'uid': userCredential.user!.uid,
+        'deviceToken': deviceToken,
+        'workshop': {
+          'area': workshopArea,
+          'city': workshopCity,
+          'closeTime': closeTime,
+          'operationalTime': operationalTime,
+          'desc': workshopDesc,
+          'id': userCredential.user!.uid,
+          'name': workshopName,
+          'imageUrl': 'assets/images/workshop1.png',
+          'loc': {'lat': loc.latitude, 'lng': loc.longitude},
+        },
+        'repair_estimates': repairEstimates,
+        'reviews': [],
+        'userType': 'vendor',
+      });
+
       return true;
     } on FirebaseAuthException catch (e) {
       AuthException.authExceptionToast(e.code);

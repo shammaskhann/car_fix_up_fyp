@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:car_fix_up/Routes/routes.dart';
+import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/shared/button.dart';
 import 'package:car_fix_up/shared/textfield.dart';
 import 'package:car_fix_up/shared/utils.dart';
+import 'package:car_fix_up/testing/Vendor/auth/vendor_Info_signup_screen.dart';
 import 'package:car_fix_up/views/User/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +19,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthController controller = AuthController();
+    final userController = Get.find<UserController>();
     return Scaffold(
       backgroundColor: kGreyText,
       resizeToAvoidBottomInset: true,
@@ -150,7 +153,14 @@ class LoginView extends StatelessWidget {
                             color: kWhiteColor)),
                     InkWell(
                       onTap: () {
-                        Get.toNamed(RouteName.signup);
+                        if (userController.userType.toString() ==
+                            "UserType.user") {
+                          Get.toNamed(RouteName.signup);
+                        }
+                        if (userController.userType.toString() ==
+                            "UserType.vendor") {
+                          Get.to(() => VendorInfoScreen());
+                        }
                       },
                       child: Text("Sign Up",
                           style: GoogleFonts.oxanium(

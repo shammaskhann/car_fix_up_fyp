@@ -23,11 +23,25 @@ void main() async {
 
   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   //call the useSystemCallingUI
-  ZegoUIKit().initLog().then((value) {
-    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-      [ZegoUIKitSignalingPlugin()],
-    );
-  });
+  // ZegoUIKit().initLog().then((value) {
+  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+  //     [
+  //       ZegoUIKitSignalingPlugin(),
+  //     ],
+  //   );
+  //});
+  // ZegoUIKitPrebuiltCallInvitationService().init(
+  //   appID: kAppID,
+  //   appSign: kAppSign,
+  //   userID: "",
+  //   userName: "",
+  //   plugins: [ZegoUIKitSignalingPlugin()],
+  //   notificationConfig: ZegoCallInvitationNotificationConfig(
+  //     androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+  //       showFullScreen: true,
+  //     ),
+  //   ),
+  // );
 
   PushNotification().initializeLocalNotifications();
 
