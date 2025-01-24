@@ -37,9 +37,10 @@ class _ChatViewState extends State<ChatView> {
     _chatViewController = ChatViewController();
     _messageController = TextEditingController();
     _chatViewController.getChatUserInfo(widget.uid).then((value) {
-      //log("User Info: ${value.toString()}");
+      log("User Info: ${value.toString()}");
 
-      name.value = value['name'];
+      imageUrl.value = value['workshop']['imageUrl'];
+      name.value = value['workshop']['name'];
       deviceToken.value = value['deviceToken'];
     });
   }
@@ -77,14 +78,20 @@ class _ChatViewState extends State<ChatView> {
                 Row(children: [
                   CircleAvatar(
                       radius: 0.03.sh,
-                      backgroundColor: kGreyText,
-                      child: Obx(() => Text(
-                            getInitials(name.value == "" ? "User" : name.value),
-                            style: GoogleFonts.oxanium(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: kWhiteColor),
-                          ))),
+                      backgroundColor: Colors.transparent,
+                      child: Obx(() => ClipOval(
+                          child: imageUrl.value == ""
+                              ? Icon(
+                                  Icons.person,
+                                  size: 0.1.sw,
+                                  color: kWhiteColor,
+                                )
+                              : Image.network(
+                                  imageUrl.value,
+                                  width: 0.1.sw,
+                                  height: 0.1.sw,
+                                  fit: BoxFit.cover,
+                                )))),
                   const SizedBox(
                     width: 10,
                   ),
@@ -265,21 +272,21 @@ class _ChatViewState extends State<ChatView> {
                 SizedBox(
                   width: 0.01.sw,
                 ),
-                Container(
-                  height: 0.06.sh,
-                  width: 0.12.sw,
-                  decoration: BoxDecoration(
-                    color: kPrimaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.add,
-                      color: kWhiteColor,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   height: 0.06.sh,
+                //   width: 0.12.sw,
+                //   decoration: BoxDecoration(
+                //     color: kPrimaryColor,
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   child: IconButton(
+                //     onPressed: () {},
+                //     icon: const Icon(
+                //       Icons.add,
+                //       color: kWhiteColor,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(

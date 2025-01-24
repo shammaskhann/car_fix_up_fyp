@@ -43,7 +43,7 @@ class WorkshopTile extends StatelessWidget {
                       topLeft: Radius.circular(0.02.sw),
                       bottomLeft: Radius.circular(0.02.sw)),
                   image: DecorationImage(
-                    image: AssetImage(
+                    image: NetworkImage(
                       vendor.workshop.imageUrl,
                     ),
                     fit: BoxFit.cover,

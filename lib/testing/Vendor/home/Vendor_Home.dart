@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:car_fix_up/controller/appointment_controller.dart';
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/firebase/token/fcm_token.dart';
 import 'package:car_fix_up/shared/common_method.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
@@ -26,7 +27,7 @@ class VendorHomeview extends StatelessWidget {
         Get.put(AppointmentScheduleController());
 
     RxString _selectedStatus = "onHold".obs;
-
+    fcmToken().checkForRefreshToken();
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(

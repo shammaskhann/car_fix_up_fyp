@@ -4,6 +4,7 @@ import 'package:car_fix_up/shared/textfield.dart';
 import 'package:car_fix_up/testing/Vendor/auth/vendor_sign_up_controller.dart';
 import 'package:car_fix_up/testing/Vendor/auth/vendor_workshop_location_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -28,18 +29,18 @@ class WorkshopInfoScreen extends StatelessWidget {
               Column(
                 children: [
                   30.h.verticalSpace,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(" Car Fix Up ",
-                          style: GoogleFonts.oxanium(
-                              fontSize: 24.sp,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor)),
-                      SvgPicture.asset("assets/images/car.svg", width: 100.w),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(" Car Fix Up ",
+                  //         style: GoogleFonts.oxanium(
+                  //             fontSize: 24.sp,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: kPrimaryColor)),
+                  //     SvgPicture.asset("assets/images/car.svg", width: 100.w),
+                  //   ],
+                  // ),
+
                   // Welcoming Text
 
                   Align(
@@ -50,6 +51,37 @@ class WorkshopInfoScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: kPrimaryColor)),
                   ),
+                  const SizedBox(height: 20),
+                  //Workshop Image upload
+                  GestureDetector(
+                      onTap: () {
+                        controller.uploadImage();
+                      },
+                      child: Obx(
+                        () => Container(
+                          height: 120.h,
+                          width: 120.w,
+                          decoration: BoxDecoration(
+                            color: kWhiteColor.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                            // borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipOval(
+                            child: controller.isImageSelected.value == true
+                                ? Image.memory(
+                                    controller.profileImageBytes ??
+                                        Uint8List(0),
+                                    fit: BoxFit.cover,
+                                  )
+                                : Icon(
+                                    Icons.add_a_photo,
+                                    size: 50.r,
+                                    color: kPrimaryColor,
+                                  ),
+                          ),
+                        ),
+                      )),
+
                   const SizedBox(height: 10),
                   // Workshop Name
                   Obx(
@@ -143,6 +175,13 @@ class WorkshopInfoScreen extends StatelessWidget {
                           controller.operationalTimeController.text);
                       controller.validateCloseTime(
                           controller.closeTimeController.text);
+                      if (controller.profileImageBytes == null) {
+                        Get.snackbar('Error', 'Please upload an image',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: kDangerColor,
+                            colorText: kWhiteColor);
+                        return;
+                      }
 
                       if (controller.validateWorkshopName(
                               controller.workshopNameController.text) &&

@@ -14,14 +14,12 @@ class fcmToken {
   final _db = FirebaseFirestore.instance;
   UserController userController = Get.find<UserController>();
 
-  void checkForRefreshToken(String token) async {
+  void checkForRefreshToken() async {
     try {
       String? currentToken = await fcm.getToken();
       if (currentToken != null) {
-        if (currentToken != token) {
-          log('saving new token in db');
-          saveNewTokenInDb(currentToken);
-        }
+        log('Current Token: $currentToken');
+        saveNewTokenInDb(currentToken);
       }
     } catch (e) {
       log(e.toString());
@@ -29,13 +27,16 @@ class fcmToken {
   }
 
   Future<void> saveNewTokenInDb(String token) async {
+    log('saving new token in db');
     final user = auth.currentUser;
     final UserType userType = userController.userType;
     if (userType == UserType.user) {
+      log('saving new token in user db USER TYPE');
       await _db.collection('users').doc(user!.uid).update({
         'deviceToken': token,
       });
     } else {
+      log('saving new token in vendor db VENDOR TYPE');
       await _db.collection('vendors').doc(user!.uid).update({
         'deviceToken': token,
       });

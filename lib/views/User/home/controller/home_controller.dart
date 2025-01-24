@@ -55,7 +55,6 @@ class HomeController extends GetxController {
     await localStorageService.saveContactNo(userData['phone']);
     await localStorageService.savePassword(userData['password']);
     await localStorageService.saveDeviceToken(userData['deviceToken']);
-    fcmToken().checkForRefreshToken(userData['deviceToken']);
   }
 
   void initZegoCallInvitationService() {

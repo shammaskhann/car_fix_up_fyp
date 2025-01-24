@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/services/firebase/auth/auth_services.dart';
 import 'package:car_fix_up/shared/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 class VendorSignUpController extends GetxController {
   // Step 1: Vendor Info
@@ -16,6 +19,20 @@ class VendorSignUpController extends GetxController {
   final placeHolderName = "".obs;
   final placeHolderPassword = "".obs;
   final placeHolderPhone = "".obs;
+  File? profileImage;
+  Uint8List? profileImageBytes;
+  RxBool isImageSelected = false.obs;
+
+  void uploadImage() {
+    ImagePicker imagePicker = ImagePicker();
+    imagePicker.pickImage(source: ImageSource.gallery).then((value) {
+      if (value != null) {
+        profileImage = File(value.path);
+        profileImageBytes = profileImage!.readAsBytesSync();
+        isImageSelected.value = true;
+      }
+    });
+  }
 
   // Step 2: Workshop Info
   final workshopNameController = TextEditingController();
@@ -59,19 +76,19 @@ class VendorSignUpController extends GetxController {
     try {
       isLoading.value = true;
       final result = await authServices.vendorSignUp(
-        emailController.text,
-        nameController.text,
-        passwordController.text,
-        phoneController.text,
-        workshopNameController.text,
-        workshopDescController.text,
-        workshopAreaController.text,
-        workshopCityController.text,
-        operationalTimeController.text,
-        LatLng(latitude.value, longitude.value),
-        closeTimeController.text,
-        repairEstimates,
-      );
+          emailController.text,
+          nameController.text,
+          passwordController.text,
+          phoneController.text,
+          workshopNameController.text,
+          workshopDescController.text,
+          workshopAreaController.text,
+          workshopCityController.text,
+          operationalTimeController.text,
+          LatLng(latitude.value, longitude.value),
+          closeTimeController.text,
+          repairEstimates,
+          profileImage);
       log(result.toString());
       if (result) {
         Utils.getSuccessSnackBar("Account created successfully");

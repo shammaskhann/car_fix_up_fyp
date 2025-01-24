@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
@@ -6,12 +7,15 @@ import 'package:car_fix_up/shared/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AuthServices {
   final auth = FirebaseAuth.instance;
   final _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
   UserController userController = Get.find<UserController>();
 
   // ignore: non_constant_identifier_names
@@ -37,7 +41,8 @@ class AuthServices {
       String operationalTime,
       LatLng loc,
       String closeTime,
-      List<Map<String, dynamic>> repairEstimates) async {
+      List<Map<String, dynamic>> repairEstimates,
+      File? profileImage) async {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -55,6 +60,12 @@ class AuthServices {
       log('Operational Time: $operationalTime');
       log('Close Time: $closeTime');
 
+      String imageUrl =
+          'https://blog.bayiq.com/hubfs/shutterstock_138252137.jpg';
+      if (profileImage != null) {
+        imageUrl = await uploadImage(profileImage, userCredential.user!.uid);
+      }
+
       await _db.collection('vendors').doc(userCredential.user!.uid).set({
         'name': name,
         'email': email,
@@ -70,7 +81,7 @@ class AuthServices {
           'desc': workshopDesc,
           'id': userCredential.user!.uid,
           'name': workshopName,
-          'imageUrl': 'assets/images/workshop1.png',
+          'imageUrl': imageUrl,
           'loc': {'lat': loc.latitude, 'lng': loc.longitude},
         },
         'repair_estimates': repairEstimates,
@@ -82,6 +93,19 @@ class AuthServices {
     } on FirebaseAuthException catch (e) {
       AuthException.authExceptionToast(e.code);
       return false;
+    }
+  }
+
+  Future<String> uploadImage(File imageFile, String uid) async {
+    try {
+      final Reference storageRef =
+          _storage.ref().child('vendors').child(uid).child('workshop.jpg');
+      var url = storageRef.getDownloadURL();
+      await storageRef.putFile(imageFile);
+      return url;
+    } catch (e) {
+      log(e.toString());
+      return 'https://blog.bayiq.com/hubfs/shutterstock_138252137.jpg';
     }
   }
 

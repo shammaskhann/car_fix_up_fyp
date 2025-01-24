@@ -115,7 +115,7 @@ class VendorProfile extends StatelessWidget {
                           CircleAvatar(
                             radius: 0.15.sw,
                             backgroundImage:
-                                AssetImage(vendor.workshop.imageUrl),
+                                NetworkImage(vendor.workshop.imageUrl),
                           ),
                           const SizedBox(
                             width: 10,

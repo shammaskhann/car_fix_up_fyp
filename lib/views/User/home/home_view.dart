@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/controller/user_controller.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/firebase/token/fcm_token.dart';
 import 'package:car_fix_up/services/notification/push_notification.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
+import 'package:car_fix_up/views/User/home/screen/live-dignostic_screen/workshop_list_for_dignostic_screen.dart';
 import 'package:car_fix_up/views/User/home/screen/towing_service/towing_service_screen.dart';
 import 'package:car_fix_up/views/User/profile/customer_profile.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
     UserController userController = Get.find<UserController>();
+    fcmToken().checkForRefreshToken();
     return Scaffold(
         backgroundColor: Colors.white,
         //generate a list of items
@@ -257,17 +260,19 @@ class HomeView extends StatelessWidget {
                           ),
                           InkWell(
                             onTap: () {
-                              PushNotification.sendNotification(
-                                  "e0k1JD-xQqm10jbVflTTT_:APA91bGr_BMIvXiXGv2ab_jfrD3Y0Nnuo75v_4w9ARM8hRUc4fcZS5Zr0E5LNogVUdT0O2171lRVkxTRPzQIOYO1Jt5v2xOqVGY7RnGSZJL8qm454kS19BE",
-                                  "Live Dignostic Call Incoming",
-                                  "A Customer is seeking a Live Dignostic on Video Call",
-                                  {
-                                    "notification_type": "CALL_NOTIFICATION",
-                                    "callID": "sos_call",
-                                    "userID": "101",
-                                  });
-                              Get.toNamed(RouteName.videoCall,
-                                  arguments: "sos_call");
+                              // PushNotification.sendNotification(
+                              // "e0k1JD-xQqm10jbVflTTT_:APA91bGr_BMIvXiXGv2ab_jfrD3Y0Nnuo75v_4w9ARM8hRUc4fcZS5Zr0E5LNogVUdT0O2171lRVkxTRPzQIOYO1Jt5v2xOqVGY7RnGSZJL8qm454kS19BE",
+                              // "Live Dignostic Call Incoming",
+                              // "A Customer is seeking a Live Dignostic on Video Call",
+                              // {
+                              //   "notification_type": "CALL_NOTIFICATION",
+                              //   "callID": "sos_call",
+                              //   "userID": "101",
+                              // });
+                              // Get.toNamed(RouteName.videoCall,
+                              //     arguments: "sos_call");
+                              Get.to(
+                                  () => const WorkshopListForLiveDiagnostic());
                             },
                             child: Container(
                               height: 0.3.sh,

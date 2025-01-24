@@ -49,9 +49,12 @@ class ChatListView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.menu_rounded),
+                              icon: const Icon(
+                                Icons.menu_rounded,
+                                color: Colors.transparent,
+                              ),
                               onPressed: () {
-                                Scaffold.of(context).openDrawer();
+                                // Scaffold.of(context).openDrawer();
                               },
                               color: Colors.white,
                             ),
@@ -88,6 +91,7 @@ class ChatListView extends StatelessWidget {
                     : UserServices().getAllUsers(),
                 builder: (context, snapshot) {
                   log('User Type: ${userController.userType}');
+                  log("Data: ${snapshot.data?.length}");
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
@@ -100,7 +104,9 @@ class ChatListView extends StatelessWidget {
                       child: Text('Error: ${snapshot.error}'),
                     );
                   }
-                  if (snapshot.data == null) {
+                  if (snapshot.data == null ||
+                      snapshot.data!.isEmpty ||
+                      snapshot.data?.length == 0) {
                     return const Center(
                       child: Text('No users found'),
                     );
@@ -273,7 +279,7 @@ class MessengerTile extends StatelessWidget {
                                   color: Colors.white,
                                 )
                               : ClipOval(
-                                  child: Image.asset(
+                                  child: Image.network(
                                     imageUrl,
                                     fit: BoxFit.cover,
                                     width: 0.15.sw,
