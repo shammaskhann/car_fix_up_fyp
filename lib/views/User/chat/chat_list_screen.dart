@@ -59,7 +59,10 @@ class ChatListView extends StatelessWidget {
                               color: Colors.white,
                             ),
                             IconButton(
-                              icon: const Icon(Icons.person),
+                              icon: const Icon(
+                                Icons.person,
+                                color: Colors.transparent,
+                              ),
                               onPressed: () {
                                 Get.to(() => const CustomerProfileScreen());
                               },

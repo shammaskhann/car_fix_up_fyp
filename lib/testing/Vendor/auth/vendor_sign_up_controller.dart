@@ -77,7 +77,7 @@ class VendorSignUpController extends GetxController {
       isLoading.value = true;
       final result = await authServices.vendorSignUp(
           emailController.text,
-          nameController.text,
+          workshopNameController.text,
           passwordController.text,
           phoneController.text,
           workshopNameController.text,

@@ -107,6 +107,7 @@ class VendorProfile extends StatelessWidget {
                   ],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
                       alignment: Alignment.topCenter,
@@ -165,9 +166,9 @@ class VendorProfile extends StatelessWidget {
                                         color: kPrimaryColor,
                                       ),
                                       Text(
-                                        "${vendor.workshop.area},${vendor.workshop.city}",
+                                        "${vendor.workshop.area},\n${vendor.workshop.city}",
                                         overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
+                                        maxLines: 2,
                                         style: GoogleFonts.oxanium(
                                           color: kBlackColor,
                                           fontSize: 0.03.sw,
@@ -292,7 +293,7 @@ class VendorProfile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        vendor.workshopReviews.length > 1
+                        vendor.workshopReviews.isNotEmpty
                             ? avgRating().toStringAsFixed(1)
                             : "0.0",
                         style: GoogleFonts.oxanium(
@@ -319,7 +320,7 @@ class VendorProfile extends StatelessWidget {
               ),
             ),
             //Review List
-            (vendor.workshopReviews.length > 1)
+            (vendor.workshopReviews.isNotEmpty)
                 ? Container(
                     padding: const EdgeInsets.only(top: 10),
                     height: 0.18.sh,

@@ -68,7 +68,7 @@ class _TowingReqScreenState extends State<TowingReqScreen> {
                         IconButton(
                           icon: const Icon(Icons.person),
                           onPressed: () {},
-                          color: Colors.white,
+                          color: Colors.transparent,
                         ),
                       ],
                     ),

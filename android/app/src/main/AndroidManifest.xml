@@ -24,7 +24,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:label="car_fix_up"
+        android:label="Car fix up"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

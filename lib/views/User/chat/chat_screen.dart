@@ -39,8 +39,15 @@ class _ChatViewState extends State<ChatView> {
     _chatViewController.getChatUserInfo(widget.uid).then((value) {
       log("User Info: ${value.toString()}");
 
-      imageUrl.value = value['workshop']['imageUrl'];
-      name.value = value['workshop']['name'];
+      try {
+        imageUrl.value = value['workshop']['imageUrl'];
+      } catch (e) {
+        imageUrl.value = "";
+      }
+      log("User Type ${userController.userType}");
+
+      name.value = value['name'];
+
       deviceToken.value = value['deviceToken'];
     });
   }
@@ -81,10 +88,13 @@ class _ChatViewState extends State<ChatView> {
                       backgroundColor: Colors.transparent,
                       child: Obx(() => ClipOval(
                           child: imageUrl.value == ""
-                              ? Icon(
-                                  Icons.person,
-                                  size: 0.1.sw,
-                                  color: kWhiteColor,
+                              ? CircleAvatar(
+                                  // radius: 0.02.sh,
+                                  backgroundColor: kPrimaryColor,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: kWhiteColor,
+                                  ),
                                 )
                               : Image.network(
                                   imageUrl.value,
@@ -97,7 +107,7 @@ class _ChatViewState extends State<ChatView> {
                   ),
                   Obx(
                     () => Text(
-                      name.value == "" ? "User" : name.value,
+                      name.value == "" ? "" : name.value,
                       style: GoogleFonts.oxanium(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
