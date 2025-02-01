@@ -160,6 +160,19 @@ class ChatController {
   Stream<bool> isChatInitiated(String senderUid) {
     final user = auth.currentUser;
     String chatDocumentId = '${user!.uid}_${senderUid}';
+    log('chatDocumentId: $chatDocumentId');
     return _chatServices.isChatInitiated(chatDocumentId);
+  }
+
+  Future<bool> isChatCheckInit(String senderUid) async {
+    final user = auth.currentUser;
+    String chatDocumentId = '${user!.uid}_${senderUid}';
+    return await _chatServices.isChatCheckInitiated(chatDocumentId);
+  }
+
+  Future<bool> deleteChat(String uid) async {
+    final user = auth.currentUser;
+    String chatDocumentId = '${user!.uid}_$uid';
+    return await _chatServices.deleteChat(chatDocumentId);
   }
 }

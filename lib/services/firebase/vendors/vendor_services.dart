@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:car_fix_up/controller/chat_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:car_fix_up/model/Vendor/vendor.model.dart';
@@ -18,6 +19,19 @@ class VendorServices {
       log(e.toString());
       return [];
     }
+  }
+
+  Future<bool> checkIsChatEmpty(List<Vendor> users) async {
+    bool isChatEmpty = true;
+    ChatController chatController = ChatController();
+    for (Vendor user in users) {
+      final result = await chatController.isChatCheckInit(user.uid);
+      if (result) {
+        isChatEmpty = false;
+        break;
+      }
+    }
+    return isChatEmpty;
   }
 
   Future<Vendor> getVendorByUid(String uid) async {

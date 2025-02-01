@@ -25,6 +25,7 @@ class ChatListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserController userController = Get.find<UserController>();
+    RxBool showPlaceHolder = true.obs;
 
     return Scaffold(
         backgroundColor: kWhiteColor,
@@ -114,28 +115,88 @@ class ChatListView extends StatelessWidget {
                       child: Text('No users found'),
                     );
                   }
+                  Obx(
+                    () => showPlaceHolder.value == true
+                        ? SizedBox(
+                            height: 200.h,
+                            child: Text(
+                              "No Chat Found",
+                              style: GoogleFonts.oxanium(
+                                color: kPrimaryColor,
+                                fontSize: 0.06.sw,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  );
                   return (userController.userType == UserType.user)
-                      ? ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final Vendor vendor =
-                                snapshot.data![index] as Vendor;
-                            return MessengerTile(
-                                uid: vendor.uid,
-                                name: vendor.name,
-                                imageUrl: vendor.workshop.imageUrl);
-                          },
+                      ? Stack(
+                          children: [
+                            //Text("Vendor"),
+                            Positioned(
+                                top: 40.h,
+                                left: 0.35.sw,
+                                right: 0.35.sw,
+                                child: Expanded(
+                                    child: Text(
+                                  "No Chat Found",
+                                  style: GoogleFonts.oxanium(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ))),
+                            ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                final Vendor vendor =
+                                    snapshot.data![index] as Vendor;
+                                return MessengerTile(
+                                    uid: vendor.uid,
+                                    name: vendor.name,
+                                    imageUrl: vendor.workshop.imageUrl,
+                                    isChatInitiated: (value) {
+                                      log('Chat Initiated $value');
+                                      if (value) {
+                                        log('Chat Initiated2  $value');
+                                        showPlaceHolder.value = false;
+                                      }
+                                    });
+                              },
+                            ),
+                          ],
                         )
-                      : ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final UserModel user =
-                                snapshot.data![index] as UserModel;
-                            return MessengerTile(
-                                uid: user.uid,
-                                name: user.name,
-                                imageUrl: "null");
-                          },
+                      : Stack(
+                          children: [
+                            Positioned(
+                                top: 40.h,
+                                left: 0.35.sw,
+                                right: 0.35.sw,
+                                child: Expanded(
+                                    child: Text(
+                                  "No Chat Found",
+                                  style: GoogleFonts.oxanium(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ))),
+                            ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                final UserModel user =
+                                    snapshot.data![index] as UserModel;
+                                return MessengerTile(
+                                    uid: user.uid,
+                                    name: user.name,
+                                    imageUrl: "null",
+                                    isChatInitiated: (value) {
+                                      log('Chat Initiated $value');
+                                      if (value) {
+                                        log('Chat Initiated2 $value');
+                                        showPlaceHolder.value = false;
+                                      }
+                                    });
+                              },
+                            ),
+                          ],
                         );
                 },
               ),
@@ -149,10 +210,12 @@ class MessengerTile extends StatelessWidget {
   final String uid;
   final String name;
   final String imageUrl;
+  final void Function(bool value) isChatInitiated;
   const MessengerTile(
       {required this.uid,
       required this.name,
       required this.imageUrl,
+      required this.isChatInitiated,
       super.key});
 
   @override
@@ -240,111 +303,147 @@ class MessengerTile extends StatelessWidget {
       );
     }
 
-    return StreamBuilder(
-        stream: chatController.isChatInitiated(uid),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return const Center(
-          //     child: CircularProgressIndicator(
-          //  color: kPrimaryColor,
-          //),
-          //   );
-          // }
-          return snapshot.data == true
-              ? InkWell(
-                  onTap: () => Get.toNamed(RouteName.chat, arguments: {
-                    'uid': uid,
-                  }),
-                  child: Container(
-                    height: 0.1.sh,
-                    width: 1.sw,
-                    margin: EdgeInsets.only(
-                        top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          radius: 0.05.sw,
-                          backgroundColor: kPrimaryColor,
-                          child: (imageUrl == "null")
-                              ? const Icon(
-                                  Icons.person,
-                                  color: Colors.white,
-                                )
-                              : ClipOval(
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                    width: 0.15.sw,
-                                    height: 0.15.sw,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(
-                                        Icons.person,
-                                        size: 0.1.sw,
-                                      );
-                                    },
-                                  ),
-                                ),
-                        ),
-                        title: Text(
-                          name,
-                          style: GoogleFonts.oxanium(
-                            color: kWhiteColor,
-                            fontSize: 0.04.sw,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: StreamBuilder(
-                          stream: chatController.lastMessege(uid),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Text(
-                                '...',
-                                style: TextStyle(color: Colors.white),
-                              );
-                            }
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            if (snapshot.data == null) {
-                              return const Text('No messages found');
-                            }
-                            return Text(
-                              _getMessage(snapshot),
-                              style: GoogleFonts.oxanium(
-                                color: kWhiteColor,
-                                fontSize: 0.03.sw,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                        ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            // _buildTimeWidget(snapshot),
-                            // SizedBox(
-                            //   height: 0.01.sh,
-                            // ),
-                            _buildNewMessageCountWidget(uid),
+    return Padding(
+      padding: EdgeInsets.only(top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
+      child: Dismissible(
+        key: UniqueKey(),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        onDismissed: (direction) async {
+          bool anda = await chatController.deleteChat(uid);
+          if (anda) {
+            log('Chat Deleted');
+            Get.snackbar(
+              'Chat Deleted',
+              'Chat Deleted Successfully',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+          }
+        },
+        child: StreamBuilder(
+            stream: chatController.isChatInitiated(uid),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.data == false) {
+                isChatInitiated(false);
+              }
+              if (snapshot.data == true) {
+                isChatInitiated(true);
+              }
+              return snapshot.data == true
+                  ? InkWell(
+                      onTap: () => Get.toNamed(RouteName.chat, arguments: {
+                        'uid': uid,
+                      }),
+                      child: Container(
+                        height: 0.1.sh,
+                        width: 1.sw,
+                        // margin: EdgeInsets.only(
+                        //     top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
                           ],
                         ),
+                        child: Center(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 0.05.sw,
+                              backgroundColor: kPrimaryColor,
+                              child: (imageUrl == "null")
+                                  ? const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    )
+                                  : ClipOval(
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: 0.15.sw,
+                                        height: 0.15.sw,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Icon(
+                                            Icons.person,
+                                            size: 0.1.sw,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                            ),
+                            title: Text(
+                              name,
+                              style: GoogleFonts.oxanium(
+                                color: kWhiteColor,
+                                fontSize: 0.04.sw,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: StreamBuilder(
+                              stream: chatController.lastMessege(uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text(
+                                    '...',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+                                if (snapshot.data == null) {
+                                  return const Text('No messages found');
+                                }
+                                return Text(
+                                  _getMessage(snapshot),
+                                  style: GoogleFonts.oxanium(
+                                    color: kWhiteColor,
+                                    fontSize: 0.03.sw,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                // _buildTimeWidget(snapshot),
+                                // SizedBox(
+                                //   height: 0.01.sh,
+                                // ),
+                                _buildNewMessageCountWidget(uid),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink();
-        });
+                    )
+                  : SizedBox.shrink();
+            }),
+      ),
+    );
   }
 }
