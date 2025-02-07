@@ -43,39 +43,45 @@ class WorkshopTile extends StatelessWidget {
                       topLeft: Radius.circular(0.02.sw),
                       bottomLeft: Radius.circular(0.02.sw)),
                   image: DecorationImage(
-                    image: AssetImage(
+                    image: NetworkImage(
                       vendor.workshop.imageUrl,
                     ),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0.02.sw),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      vendor.workshop.name,
-                      style: GoogleFonts.oxanium(
-                        color: kBlackColor,
-                        fontSize: 0.04.sw,
-                        fontWeight: FontWeight.bold,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 0.02.sw),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        vendor.workshop.name,
+                        style: GoogleFonts.oxanium(
+                          color: kBlackColor,
+                          fontSize: 0.04.sw,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "${vendor.workshop.area},${vendor.workshop.city}",
-                      style: GoogleFonts.oxanium(
-                        color: kBlackColor,
-                        fontSize: 0.03.sw,
-                        fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          "${vendor.workshop.area},${vendor.workshop.city}",
+                          style: GoogleFonts.oxanium(
+                            color: kBlackColor,
+                            fontSize: 0.03.sw,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const Spacer(),
+              // const Spacer(),
               //Rating
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

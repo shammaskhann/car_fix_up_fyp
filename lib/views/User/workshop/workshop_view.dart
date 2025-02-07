@@ -116,6 +116,7 @@ class WorkshopView extends StatelessWidget {
                     List<Vendor>? vendors = snapshot.data;
                     return Expanded(
                       child: ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 100),
                         itemCount: vendors!.length,
                         itemBuilder: (context, index) {
                           return Padding(

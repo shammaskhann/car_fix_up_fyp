@@ -60,16 +60,15 @@ class _TowingReqScreenState extends State<TowingReqScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.menu_rounded),
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          color: Colors.white,
-                        ),
+                            icon: const Icon(Icons.menu_rounded),
+                            onPressed: () {
+                              // Scaffold.of(context).openDrawer();
+                            },
+                            color: Colors.transparent),
                         IconButton(
                           icon: const Icon(Icons.person),
                           onPressed: () {},
-                          color: Colors.white,
+                          color: Colors.transparent,
                         ),
                       ],
                     ),

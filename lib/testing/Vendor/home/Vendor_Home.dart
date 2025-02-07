@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/controller/appointment_controller.dart';
 import 'package:car_fix_up/model/Appointment/appointment.model.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
+import 'package:car_fix_up/services/firebase/token/fcm_token.dart';
 import 'package:car_fix_up/shared/common_method.dart';
 import 'package:car_fix_up/views/User/home/controller/home_controller.dart';
 import 'package:car_fix_up/views/User/home/home_view.dart';
@@ -26,7 +28,7 @@ class VendorHomeview extends StatelessWidget {
         Get.put(AppointmentScheduleController());
 
     RxString _selectedStatus = "onHold".obs;
-
+    fcmToken().checkForRefreshToken();
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -292,7 +294,7 @@ class VendorHomeview extends StatelessWidget {
           vertical: 0.02.sh,
           horizontal: 0.02.sw,
         ),
-        height: 0.24.sh,
+        height: 0.27.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           color: kWhiteColor,
@@ -481,14 +483,31 @@ class VendorHomeview extends StatelessWidget {
                   ],
                 ),
               ),
+            (!isCompletedWidget)
+                ? IconButton(
+                    onPressed: () {
+                      Get.toNamed(RouteName.chat, arguments: {
+                        'uid': appointment.userUid,
+                      });
+                    },
+                    icon: Row(
+                      children: const [
+                        Icon(
+                          Icons.chat,
+                          color: kPrimaryColor,
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
             const Spacer(),
             // Accept and Reject Button in a row at bottom stick
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
               child: isCompletedWidget
                   ? (appointment.isReviewed)
-                      ? Text("Reviewed")
-                      : Text("Not Reviewed")
+                      ? const Text("Reviewed")
+                      : const Text("Not Reviewed")
                   : isConfirmationWidget
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

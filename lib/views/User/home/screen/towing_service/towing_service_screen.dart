@@ -283,11 +283,11 @@ class _TowingScreenServicesState extends State<TowingScreenServices> {
                       child: CustomButton(
                           borderRadius: 15,
                           text: "Cancel",
-                          onPressed: () {
-                            _towingRideService.deleteTowingRequest(requestID!);
+                          onPressed: () async {
                             setState(() {
                               isLoading = false;
                             });
+                            _towingRideService.deleteTowingRequest(requestID!);
                           },
                           textColor: kWhiteColor,
                           buttonColor: kPrimaryColor),

@@ -188,4 +188,6 @@ class RouteName {
   static const String vendorsDashboard = '/vendors-dashboard';
   static const String liveLocScreen = '/live-loc-screen';
   static const String vendorChatScreen = '/vendor-chat-screen';
+
+  static String forgotPassword = '/forgot-password';
 }

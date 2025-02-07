@@ -104,7 +104,7 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                   child: Center(
                     child: Text(
-                      "Hello, user",
+                      "CAR FIX UP",
                       // "Hello, ${userController.name ?? "User"} ",
                       style: GoogleFonts.oxanium(
                           color: kWhiteColor,

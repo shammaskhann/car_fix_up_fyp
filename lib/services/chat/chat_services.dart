@@ -108,4 +108,38 @@ class ChatServices {
         .snapshots()
         .map((event) => event.docs.isNotEmpty);
   }
+
+  // Stream to check all the chats to check isthere NO chat initiated in all
+  Future<bool> isChatCheckInitiated(String chatId) async {
+    //check is there any message in chat
+    final docSnapshot =
+        await chatCollection.doc(chatId).collection('messages').get();
+    return docSnapshot.docs.isNotEmpty;
+  }
+
+  Future<bool> deleteChat(String chatDocumentId) async {
+    try {
+      log('Deleting Chat: $chatDocumentId');
+
+      // Check if the document exists
+      // final chatDocRef = chatCollection.doc(chatDocumentId);
+      final chatDocRef =
+          _db.collection('chats').doc(chatDocumentId).collection('messages');
+      final chatDocSnapshot = await chatDocRef.get();
+      if (chatDocSnapshot.docs.isEmpty) {
+        log('Chat does not exist: $chatDocumentId');
+        return false;
+      }
+      chatDocSnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+      await chatDocRef.doc(chatDocumentId).delete();
+
+      log('Chat deleted successfully: $chatDocumentId');
+      return true;
+    } catch (e) {
+      log('Error deleting chat: $e');
+      return false;
+    }
+  }
 }

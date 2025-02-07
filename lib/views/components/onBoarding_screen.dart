@@ -440,7 +440,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         InkWell(
                             onTap: () {
                               userController.userType = UserType.user;
-                              Get.offAllNamed(RouteName.login);
+                              Get.toNamed(RouteName.login);
                             },
                             child: Container(
                               height: 50.h,
@@ -473,7 +473,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         InkWell(
                             onTap: () {
                               userController.userType = UserType.vendor;
-                              Get.offAllNamed(RouteName.login);
+                              Get.toNamed(RouteName.login);
                             },
                             child: Container(
                               height: 50.h,

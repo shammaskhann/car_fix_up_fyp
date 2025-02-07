@@ -1,6 +1,7 @@
 import 'package:car_fix_up/Routes/routes.dart';
 import 'package:car_fix_up/resources/constatnt.dart';
 import 'package:car_fix_up/services/local-storage/localStorage.dart';
+import 'package:car_fix_up/views/User/update_profile/update_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,8 +9,35 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-class CustomerProfileScreen extends StatelessWidget {
+class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
+
+  @override
+  State<CustomerProfileScreen> createState() => _CustomerProfileScreenState();
+}
+
+class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
+  late Future<Map<String, String?>> _userInfoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userInfoFuture = _getUserInfo();
+  }
+
+  Future<Map<String, String?>> _getUserInfo() async {
+    final localStorageService = LocalStorageService();
+    final name = await localStorageService.getName();
+    final email = await localStorageService.getEmail();
+    final contactNo = await localStorageService.getContactNo();
+    final userType = await localStorageService.getUserType();
+    return {
+      'name': name,
+      'email': email,
+      'contactNo': contactNo,
+      'userType': userType,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,32 +47,48 @@ class CustomerProfileScreen extends StatelessWidget {
           children: [
             ClipPath(
               clipper: BottomCurveClipper(),
-              child: Container(
-                height: 0.25.sh,
-                width: 1.sw,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [kBlackColor, Colors.grey[800]!],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    'Profile',
-                    style: GoogleFonts.oxanium(
-                      color: kPrimaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.sp,
+              child: Stack(
+                children: [
+                  Container(
+                    height: 0.25.sh,
+                    width: 1.sw,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [kBlackColor, Colors.grey[800]!],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Profile',
+                        style: GoogleFonts.oxanium(
+                          color: kPrimaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24.sp,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    top: 0.05.sh,
+                    left: 14,
+                    child: IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        )),
+                  )
+                ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: FutureBuilder<Map<String, String?>>(
-                future: _getUserInfo(),
+                future: _userInfoFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -67,7 +111,16 @@ class CustomerProfileScreen extends StatelessWidget {
                         _buildProfileDetail("Email", userInfo['email']),
                         _buildProfileDetail(
                             "Contact No", userInfo['contactNo']),
-                        _buildProfileDetail("User Type", userInfo['userType']),
+                        const SizedBox(height: 20),
+                        _buildButton("Edit Profile", () async {
+                          await Get.to(() => UpdateProfileScreen(
+                              name: userInfo['name'] ?? "",
+                              email: userInfo['email'] ?? "",
+                              phone: userInfo['contactNo'] ?? ""));
+                          setState(() {
+                            _userInfoFuture = _getUserInfo();
+                          });
+                        }),
                         const SizedBox(height: 20),
                         _buildButton("Logout", () async {
                           ZegoUIKitPrebuiltCallInvitationService().uninit();
@@ -88,20 +141,6 @@ class CustomerProfileScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<Map<String, String?>> _getUserInfo() async {
-    final localStorageService = LocalStorageService();
-    final name = await localStorageService.getName();
-    final email = await localStorageService.getEmail();
-    final contactNo = await localStorageService.getContactNo();
-    final userType = await localStorageService.getUserType();
-    return {
-      'name': name,
-      'email': email,
-      'contactNo': contactNo,
-      'userType': userType,
-    };
   }
 
   Widget _buildProfileDetail(String title, String? value) {
@@ -153,7 +192,7 @@ class CustomerProfileScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 color: kWhiteColor,
               ),
