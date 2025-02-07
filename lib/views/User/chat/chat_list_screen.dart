@@ -113,21 +113,21 @@ class ChatListView extends StatelessWidget {
                       snapshot.data?.length == 0) {
                     return SizedBox();
                   }
-                  Obx(
-                    () => showPlaceHolder.value == true
-                        ? SizedBox(
-                            height: 200.h,
-                            child: Text(
-                              "No Chat Found",
-                              style: GoogleFonts.oxanium(
-                                color: kPrimaryColor,
-                                fontSize: 0.06.sw,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  );
+                  // Obx(
+                  //   () => showPlaceHolder.value == true
+                  //       ? SizedBox(
+                  //           height: 200.h,
+                  //           child: Text(
+                  //             "No Chat Found",
+                  //             style: GoogleFonts.oxanium(
+                  //               color: kPrimaryColor,
+                  //               fontSize: 0.06.sw,
+                  //               fontWeight: FontWeight.bold,
+                  //             ),
+                  //           ),
+                  //         )
+                  //       : const SizedBox.shrink(),
+                  // );
                   return (userController.userType == UserType.user)
                       ? ListView.builder(
                           itemCount: snapshot.data!.length,
