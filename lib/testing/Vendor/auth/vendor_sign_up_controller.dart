@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class VendorSignUpController extends GetxController {
   // Step 1: Vendor Info
@@ -58,6 +59,28 @@ class VendorSignUpController extends GetxController {
   RxBool isLoading = false.obs;
 
   AuthServices authServices = AuthServices();
+
+  Future<void> selectTime(BuildContext context,
+      TextEditingController controller, RxString placeHolder) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      final formattedTime = _formatTimeOfDay(picked);
+      controller.text = formattedTime;
+      placeHolder.value = '';
+    }
+  }
+
+  String _formatTimeOfDay(TimeOfDay time) {
+    final now = DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final format = DateFormat('hh:mm a');
+    return format.format(dt);
+  }
+
+  // ... existing code ...
 
   bool validateEstimates() {
     for (final estimate in repairEstimates) {

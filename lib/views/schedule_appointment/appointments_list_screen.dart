@@ -176,7 +176,7 @@ class AppointmentsListScreen extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "Mobile Repair: ",
+                            "Remote Repair: ",
                             style: GoogleFonts.oxanium(
                               color: kBlackText,
                               fontSize: 16.sp,

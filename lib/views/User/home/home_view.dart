@@ -142,7 +142,7 @@ class HomeView extends StatelessWidget {
                                   width: 0.2.sw,
                                 ),
                                 Text(
-                                  "Mobile Repair\nService",
+                                  "Remote Repair\nService",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.oxanium(
                                     color: kPrimaryColor,

@@ -26,10 +26,13 @@ const String kProfileIcon = 'assets/images/user-bubble-svgrepo-com.svg';
 const String kSOSIcon = 'assets/images/sos.svg';
 
 // const int kAppID = 798845097;
-const int kAppID = 1899771896;
+// const int kAppID = 1899771896;
+const int kAppID = 581839913;
 // const String kAppSign =
 //     "121f3b8632f7a56c8449f4b718fda4ccba2ce53d7362e893521bf09b63d4de1a";
+// //const String kAppSign =
+//  //   "80f8b36d50e788b54818aec1134d37dc5a6bacc339a8e3137007cd25a11973d8";
 const String kAppSign =
-    "80f8b36d50e788b54818aec1134d37dc5a6bacc339a8e3137007cd25a11973d8";
+    "ccfef5119046be3631de361d5a9fbf2ffab9b332a27d9d9bd320d5e9645ab342";
 
 enum UserType { user, vendor }

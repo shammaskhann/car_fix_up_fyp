@@ -9,7 +9,9 @@ class CustomTextField extends StatefulWidget {
   final TextInputType inputType;
   final bool isPasswordField;
   final String placeHolder;
+  final void Function()? onTap;
   final void Function(String)? onChanged;
+  final bool enabled;
 
   CustomTextField({
     super.key,
@@ -19,6 +21,8 @@ class CustomTextField extends StatefulWidget {
     this.isPasswordField = false,
     required this.placeHolder,
     this.onChanged,
+    this.onTap,
+    this.enabled = true,
   });
 
   @override
@@ -47,6 +51,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(
+            onTap: widget.onTap,
+            readOnly: !widget.enabled,
             focusNode: _focusNode,
             style: GoogleFonts.oxanium(
                 fontSize: 15.sp,

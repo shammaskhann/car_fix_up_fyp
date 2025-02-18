@@ -80,7 +80,7 @@ class RemoteRepairScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: CustomButton(
-                text: "Request Mobile Repair",
+                text: "Request Remote Repair",
                 onPressed: () {
                   Get.toNamed(RouteName.remoteRepairWorkshopList,
                       arguments: mapController.currentMapCenter.value);

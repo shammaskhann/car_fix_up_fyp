@@ -28,150 +28,134 @@ class ChatListView extends StatelessWidget {
     RxBool showPlaceHolder = true.obs;
 
     return Scaffold(
-        backgroundColor: kWhiteColor,
-        body: Stack(
-          children: [
-            ClipPath(
-                clipper: BottomCurveClipper(),
-                child: Container(
-                  height: 0.25.sh,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [kBlackColor, Colors.grey[800]!],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
+      backgroundColor: kWhiteColor,
+      body: Column(
+        children: [
+          ClipPath(
+            clipper: BottomCurveClipper(),
+            child: Container(
+              height: 0.25.sh,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [kBlackColor, Colors.grey[800]!],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.05.sh),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.menu_rounded,
+                            color: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            // Scaffold.of(context).openDrawer();
+                          },
+                          color: Colors.white,
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.person,
+                            color: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            Get.to(() => const CustomerProfileScreen());
+                          },
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 0.05.sh),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.menu_rounded,
-                                color: Colors.transparent,
-                              ),
-                              onPressed: () {
-                                // Scaffold.of(context).openDrawer();
-                              },
-                              color: Colors.white,
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.person,
-                                color: Colors.transparent,
-                              ),
-                              onPressed: () {
-                                Get.to(() => const CustomerProfileScreen());
-                              },
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 0.02.sh),
-                        child: Text(
-                          "Chat",
-                          style: GoogleFonts.oxanium(
-                            color: kPrimaryColor,
-                            fontSize: 0.06.sw,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-            Container(
-              height: 0.74.sh,
-              padding: EdgeInsets.only(top: 0.19.sh),
-              child: FutureBuilder(
-                future: userController.userType == UserType.user
-                    ? VendorServices().getAllVendors()
-                    : UserServices().getAllUsers(),
-                builder: (context, snapshot) {
-                  log('User Type: ${userController.userType}');
-                  log("Data: ${snapshot.data?.length}");
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.02.sh),
+                    child: Text(
+                      "Chat",
+                      style: GoogleFonts.oxanium(
                         color: kPrimaryColor,
+                        fontSize: 0.06.sw,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  if (snapshot.data == null ||
-                      snapshot.data!.isEmpty ||
-                      snapshot.data?.length == 0) {
-                    return SizedBox();
-                  }
-                  // Obx(
-                  //   () => showPlaceHolder.value == true
-                  //       ? SizedBox(
-                  //           height: 200.h,
-                  //           child: Text(
-                  //             "No Chat Found",
-                  //             style: GoogleFonts.oxanium(
-                  //               color: kPrimaryColor,
-                  //               fontSize: 0.06.sw,
-                  //               fontWeight: FontWeight.bold,
-                  //             ),
-                  //           ),
-                  //         )
-                  //       : const SizedBox.shrink(),
-                  // );
-                  return (userController.userType == UserType.user)
-                      ? ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final Vendor vendor =
-                                snapshot.data![index] as Vendor;
-                            return MessengerTile(
-                                uid: vendor.uid,
-                                name: vendor.name,
-                                imageUrl: vendor.workshop.imageUrl,
-                                isChatInitiated: (value) {
-                                  log('Chat Initiated $value');
-                                  if (value) {
-                                    log('Chat Initiated2  $value');
-                                    showPlaceHolder.value = false;
-                                  }
-                                });
-                          },
-                        )
-                      : ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final UserModel user =
-                                snapshot.data![index] as UserModel;
-                            return MessengerTile(
-                                uid: user.uid,
-                                name: user.name,
-                                imageUrl: "null",
-                                isChatInitiated: (value) {
-                                  log('Chat Initiated $value');
-                                  if (value) {
-                                    log('Chat Initiated2 $value');
-                                    showPlaceHolder.value = false;
-                                  }
-                                });
-                          },
-                        );
-                  //   ],
-                  // );
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ));
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: userController.userType == UserType.user
+                  ? VendorServices().getAllVendors()
+                  : UserServices().getAllUsers(),
+              builder: (context, snapshot) {
+                log('User Type: ${userController.userType}');
+                log("Data: ${snapshot.data?.length}");
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: kPrimaryColor,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                }
+                if (snapshot.data == null ||
+                    snapshot.data!.isEmpty ||
+                    snapshot.data?.length == 0) {
+                  return SizedBox();
+                }
+                return (userController.userType == UserType.user)
+                    ? ListView.builder(
+                        padding: EdgeInsets.only(bottom: 0.02.sh),
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final Vendor vendor = snapshot.data![index] as Vendor;
+                          return MessengerTile(
+                              uid: vendor.uid,
+                              name: vendor.name,
+                              imageUrl: vendor.workshop.imageUrl,
+                              isChatInitiated: (value) {
+                                log('Chat Initiated $value');
+                                if (value) {
+                                  log('Chat Initiated2  $value');
+                                  showPlaceHolder.value = false;
+                                }
+                              });
+                        },
+                      )
+                    : ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        padding: EdgeInsets.only(bottom: 0.02.sh),
+                        itemBuilder: (context, index) {
+                          final UserModel user =
+                              snapshot.data![index] as UserModel;
+                          return MessengerTile(
+                              uid: user.uid,
+                              name: user.name,
+                              imageUrl: "null",
+                              isChatInitiated: (value) {
+                                log('Chat Initiated $value');
+                                if (value) {
+                                  log('Chat Initiated2 $value');
+                                  showPlaceHolder.value = false;
+                                }
+                              });
+                        },
+                      );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -229,10 +213,6 @@ class MessengerTile extends StatelessWidget {
       }
       return Text(
         displayTime,
-        // style: const TextStyle(
-        //   color: Colors.grey,
-        //   fontSize: 12,
-        // ),
         style: GoogleFonts.oxanium(
           color: Colors.grey,
           fontSize: 12,
@@ -256,11 +236,6 @@ class MessengerTile extends StatelessWidget {
             backgroundColor: kPrimaryColor,
             child: Text(
               count.toString(),
-              // style: const TextStyle(
-              //   color: kWhiteColor,
-              //   fontSize: 12,
-              //   fontWeight: FontWeight.bold,
-              // ),
               style: GoogleFonts.oxanium(
                 color: kWhiteColor,
                 fontSize: 12,
@@ -323,8 +298,6 @@ class MessengerTile extends StatelessWidget {
                       child: Container(
                         height: 0.1.sh,
                         width: 1.sw,
-                        // margin: EdgeInsets.only(
-                        //     top: 0.01.sh, left: 0.05.sw, right: 0.05.sw),
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(10),
@@ -399,10 +372,6 @@ class MessengerTile extends StatelessWidget {
                             trailing: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                // _buildTimeWidget(snapshot),
-                                // SizedBox(
-                                //   height: 0.01.sh,
-                                // ),
                                 _buildNewMessageCountWidget(uid),
                               ],
                             ),

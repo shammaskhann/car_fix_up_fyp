@@ -130,28 +130,38 @@ class WorkshopInfoScreen extends StatelessWidget {
                   // Operational Time
                   Obx(
                     () => CustomTextField(
+                      enabled: false,
                       inputType: TextInputType.text,
                       hintText: "Operational Time (09:00 AM / 11:00 PM)",
                       controller: controller.operationalTimeController,
-                      onChanged: (value) {
-                        controller.validateOperationalTime(value);
-                        controller.validateTimeFormat(
-                            controller.operationalTimeController.text);
-                      },
+                      onTap: () => controller.selectTime(
+                          context,
+                          controller.operationalTimeController,
+                          controller.placeHolderOperationalTime),
+                      // onChanged: (value) {
+                      //   controller.validateOperationalTime(value);
+                      //   controller.validateTimeFormat(
+                      //       controller.operationalTimeController.text);
+                      // },
                       placeHolder: controller.placeHolderOperationalTime.value,
                     ),
                   ),
                   // Close Time
                   Obx(
                     () => CustomTextField(
+                      enabled: false,
                       inputType: TextInputType.text,
                       hintText: "Close Time (09:00 AM / 11:00 PM)",
                       controller: controller.closeTimeController,
-                      onChanged: (value) {
-                        controller.validateCloseTime(value);
-                        controller.validateTimeFormat(
-                            controller.operationalTimeController.text);
-                      },
+                      onTap: () => controller.selectTime(
+                          context,
+                          controller.closeTimeController,
+                          controller.placeHolderCloseTime),
+                      // onChanged: (value) {
+                      //   controller.validateCloseTime(value);
+                      //   controller.validateTimeFormat(
+                      //       controller.operationalTimeController.text);
+                      // },
                       placeHolder: controller.placeHolderCloseTime.value,
                     ),
                   ),
